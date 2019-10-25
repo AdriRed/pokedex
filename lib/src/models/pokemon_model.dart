@@ -3,27 +3,23 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-class Pokemon {
-
-
-
-}
-
 class PokemonSpecie {
 
   final String _findLang = "en";
-
+  String name;
   String description;
-  Map<String, dynamic> evolutionChain;
+  List<dynamic> evolutionChain;
+  List<Pokemon> pokemon;
+  
   Uri _evolutionChainUri;
+
   PokemonSpecie.fromJSON(Map<String, dynamic> json) {
     description = _findFlavorText(json["flavor_text_entries"]);
-    List<String> evoChain = json["evolution_chain"]["url"].split("https://pokeapi.co/api/v2/evolution-chain/")[1].split('/')[0];
-
-    _evolutionChainUri = new Uri.https("pokeapi.co", "api/v2/evolution-chain/" + evoChain.last);
+    String evoChain = json["evolution_chain"]["url"].split("https://pokeapi.co/api/v2/evolution-chain/")[1].split('/')[0];
+    _evolutionChainUri = new Uri.https("pokeapi.co", "api/v2/evolution-chain/" + evoChain);
   }
 
-  Future<Map<String, dynamic>> setEvolutionChain(Map<String, dynamic> json) async {
+  Future<List<dynamic>> setEvolutionChain(Map<String, dynamic> json) async {
     
   }
 
@@ -40,4 +36,8 @@ class PokemonSpecie {
 
     return find;
   }
+}
+
+class Pokemon {
+  String name;
 }
