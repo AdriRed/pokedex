@@ -1,10 +1,10 @@
 import 'package:pokedex/models/Model.dart';
 
-class PokemonType extends Model {
+class PokemonBaseType implements Model {
   int id;
   Map<String, String> names;
 
-  PokemonType.fromJSON(Map<String, dynamic> json) : super.fromJSON(json) {
+  PokemonBaseType.fromJSON(Map<String, dynamic> json) {
     id = json["id"];
     names = new Map<String, String>();
     for (var item in json["names"])

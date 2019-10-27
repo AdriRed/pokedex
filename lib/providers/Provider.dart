@@ -1,13 +1,13 @@
 import 'package:pokedex/models/Model.dart';
 
-abstract class Provider<T extends Model> {
+class Provider<T> {
   String uri;
-  T info;
+  Model info;
 
   void getInfo() {
-    Map<String, dynamic> foo = new Map()..putIfAbsent("key", () => "ñldskj");
-
-    info = new T.fromJSON();
+    Map<String, dynamic> foo = new Map()..putIfAbsent("key", () => "aldskj");
+  
+    info = Model.fromJSON(T, foo);
   }
 
   Provider(String uri) {
