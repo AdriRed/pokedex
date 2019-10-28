@@ -1,3 +1,5 @@
+import 'dart:developer';
+import 'dart:convert';
 import 'package:pokedex/models/Model.dart';
 import 'package:pokedex/providers/Provider.dart';
 
@@ -15,6 +17,7 @@ class PokemonSpecies implements Model {
   Provider<PokemonEvolutionChain> evolutionChain;
 
   PokemonSpecies.fromJSON(Map<String, dynamic> json) {
+    //log(json["name"]);
     id = json["id"];
     order = json["order"];
 
@@ -24,12 +27,12 @@ class PokemonSpecies implements Model {
     varieties = new List();
 
     for (var name in json["names"])
-      names.putIfAbsent(name["language"]["name"], name["name"]);
+      names.putIfAbsent(name["language"]["name"], () => name["name"]);
     for (var flavor in json["flavor_text_entries"])
       descriptionEntries.putIfAbsent(
-          flavor["language"]["name"], flavor["flavor_text"]);
+          flavor["language"]["name"], () => flavor["flavor_text"]);
     for (var genus in json["genera"])
-      genera.putIfAbsent(genus["language"]["name"], genus["genus"]);
+      genera.putIfAbsent(genus["language"]["name"], () => genus["genus"]);
     for (var variety in json["varieties"])
       varieties.add(new PokemonVariety.fromJSON(variety));
 

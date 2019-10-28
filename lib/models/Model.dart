@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:pokedex/models/Pokemon.dart';
 import 'package:pokedex/models/PokemonBaseAbility.dart';
 import 'package:pokedex/models/PokemonEvolutionChain.dart';
@@ -7,25 +9,26 @@ import 'package:pokedex/models/PokemonBaseType.dart';
 
 abstract class Model {
   factory Model.fromJSON(Type type, Map<String, dynamic> json) {
-    
     switch (type) {
       case Pokemon:
-        return Pokemon.fromJSON(json);
+        return new Pokemon.fromJSON(json);
         break;
       case PokemonBaseAbility:
-        return PokemonBaseAbility.fromJSON(json);
+        return new PokemonBaseAbility.fromJSON(json);
         break;
       case PokemonEvolutionChain:
-        return PokemonEvolutionChain.fromJSON(json);
+        return new PokemonEvolutionChain.fromJSON(json);
         break;
       case PokemonSpecies:
-        return PokemonSpecies.fromJSON(json);
+        PokemonSpecies a = new PokemonSpecies.fromJSON(json);
+        log("factory: " + a.runtimeType.toString());
+        return a;
         break;
       case PokemonBaseStat:
-        return PokemonBaseStat.fromJSON(json);
+        return new PokemonBaseStat.fromJSON(json);
         break;
       case PokemonBaseType:
-        return PokemonBaseType.fromJSON(json);
+        return new PokemonBaseType.fromJSON(json);
         break;
     }
 

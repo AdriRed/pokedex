@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/pages/PokedexHomePage.dart';
 
 import 'src/pages/home_page.dart';
 import 'src/pages/pelicula_detalle.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Películas',
       initialRoute: '/',
       routes: {
-        '/'       : ( BuildContext context ) => HomePage(),
+        '/'       : ( BuildContext context ) => PokedexHomePage(),
         'detalle' : ( BuildContext context ) => PeliculaDetalle(),
       },
     );
