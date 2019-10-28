@@ -24,13 +24,19 @@ class Provider<T extends Model> {
       log(responseBody);
       var decoded = json.decode(responseBody);
 
-      info = new Model.fromJSON(T, decoded);
+      T object = new Model.fromJSON(T, decoded);
+      log(object.runtimeType.toString());
+      info = object;
     } catch (e) {
     }
 
+
+    
     log("info returned " + info.runtimeType.toString());
     return info;
   }
+
+  
 
   Provider(String uri) {
     this.url = uri;

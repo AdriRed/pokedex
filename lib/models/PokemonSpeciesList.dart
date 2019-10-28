@@ -20,10 +20,14 @@ class PokemonSpeciesList implements Model  {
     for (var pokemonSpecie in species) {
       log(pokemonSpecie.url);
       var specie = await pokemonSpecie.getInfo();
+      for (var variety in specie.varieties) {
+        await variety.pokemon.getInfo();
+      }
       //log("Id: "+ specie.id.toString());
       list.add(specie);
     }
     return list;
   }
+
 
 }

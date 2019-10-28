@@ -9,9 +9,11 @@ import 'package:pokedex/models/PokemonBaseType.dart';
 
 abstract class Model {
   factory Model.fromJSON(Type type, Map<String, dynamic> json) {
+    log("factory: " + type.toString());
     switch (type) {
       case Pokemon:
-        return new Pokemon.fromJSON(json);
+        Pokemon a = new Pokemon.fromJSON(json);
+        return a;
         break;
       case PokemonBaseAbility:
         return new PokemonBaseAbility.fromJSON(json);
@@ -21,7 +23,6 @@ abstract class Model {
         break;
       case PokemonSpecies:
         PokemonSpecies a = new PokemonSpecies.fromJSON(json);
-        log("factory: " + a.runtimeType.toString());
         return a;
         break;
       case PokemonBaseStat:

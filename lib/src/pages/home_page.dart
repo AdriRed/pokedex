@@ -83,9 +83,9 @@ class HomePage extends StatelessWidget {
         children: <Widget>[
           Container(
             padding: EdgeInsets.only(left: 20.0),
-            child: Text('Populares', style: Theme.of(context).textTheme.subhead  )
+            child: Text('Pokemon', style: Theme.of(context).textTheme.subhead  )
           ),
-          SizedBox(height: 5.0),
+          //SizedBox(height: 5.0),
 
           StreamBuilder(
             stream: peliculasProvider.popularesStream,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:core';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
@@ -11,13 +12,15 @@ class PokemonSpeciesListProvider {
   String next;
   int _page = 0;
   int _total = 0;
-  final int _limit = 20;
+  final int _limit = 15;
   bool loading = false;
 
-  final _streamController = StreamController<PokemonSpeciesList>.broadcast();
+  final _streamController = StreamController<List<PokemonSpecies>>.broadcast();
 
-  Function(PokemonSpeciesList) get popularesSink => _streamController.sink.add;
-  Stream<PokemonSpeciesList> get popularesStream => _streamController.stream;
+  Function(List<PokemonSpecies>) get speciesSink => _streamController.sink.add;
+  Stream<List<PokemonSpecies>> get speciesStream => _streamController.stream;
+
+  List<PokemonSpecies> _species = new List();
 
   void disposeStream() {
     _streamController?.close();
@@ -41,15 +44,14 @@ class PokemonSpeciesListProvider {
     PokemonSpeciesList list = new PokemonSpeciesList.fromJSON(json);
     
     _total += list.species.length;
-
-    List<PokemonSpecies> species = new List();
-
-    //return await list.getPokemonSpecies();
-    for (var item in list.species) {
-      species.add(new PokemonSpecies.fromJSON(await _procesarRespuesta(getUrl(item.url))));
-    }
     
-    return species;
+    final resp = await list.getPokemonSpecies();
+    _species.addAll(resp);
+    speciesSink(_species);
+
+    loading = false;
+
+    return resp;
   }
 
   Uri getUrl(String strurl) {

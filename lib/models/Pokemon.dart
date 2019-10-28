@@ -11,20 +11,30 @@ class Pokemon implements Model {
   //Provider<PokemonSpecies> specie;
   List<PokemonStat> stats;
   Map<String, String> sprites;
-  Map<int, PokemonType> types;
+  List<PokemonType> types;
   List<PokemonAbility> abilities;
 
   Pokemon.fromJSON(Map<String, dynamic> json) {
     id = json["id"];
-    stats = 
-      json["stats"].map((x) => new PokemonStat.fromJSON(x)).toList();
-    sprites = new Map();
-    types = json["types"]((x) => new PokemonType.fromJSON(x)).toList();
-    abilities =
-      json["abilities"].map((x) => new PokemonAbility.fromJSON(x)).toList();
 
-    json["sprites"].forEach((k, v) => {
-      if (v != null) sprites.putIfAbsent(k, v)
+    stats = new List();
+    sprites = new Map();
+    types = new List();
+    abilities = new List();
+
+
+    for (var stat in json["stats"]) {
+      stats.add(new PokemonStat.fromJSON(stat));
+    }    
+    for (var type in json["types"]) {
+      types.add(new PokemonType.fromJSON(type));
+    }      
+    for (var ability in json["abilities"]) {
+      abilities.add(new PokemonAbility.fromJSON(ability));
+    }
+    
+    json["sprites"].forEach((k, v) {
+      if (v != null) sprites.putIfAbsent(k, () => v);
     });
   
   }
