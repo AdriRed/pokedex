@@ -14,25 +14,25 @@ class Provider<T extends Model> {
     HttpClient http = new HttpClient();
 
     String route = url.split("pokeapi.co/")[1];
-    log(route);
+    //log(route);
     try {
       var uri = new Uri.https("pokeapi.co", route);
-      log("GET JSON: " + uri.toString());
+      //log("GET JSON: " + uri.toString());
       var request = await http.getUrl(uri);
       var response = await request.close();
       var responseBody = await response.transform(utf8.decoder).join();
-      log(responseBody);
+      //log(responseBody);
       var decoded = json.decode(responseBody);
 
       T object = new Model.fromJSON(T, decoded);
-      log(object.runtimeType.toString());
+      //log(object.runtimeType.toString());
       info = object;
     } catch (e) {
     }
 
 
     
-    log("info returned " + info.runtimeType.toString());
+    //log("info returned " + info.runtimeType.toString());
     return info;
   }
 

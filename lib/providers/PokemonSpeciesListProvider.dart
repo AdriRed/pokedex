@@ -6,7 +6,6 @@ import 'dart:convert';
 
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/models/PokemonSpeciesList.dart';
-import 'package:pokedex/providers/Provider.dart';
 
 class PokemonSpeciesListProvider {
   String next;
@@ -66,7 +65,7 @@ class PokemonSpeciesListProvider {
     final resp = await http.getUrl(url);
     final respbody = await resp.close();
     final converted = await respbody.transform(utf8.decoder).join();
-    log(converted);
+    //log(converted);
     final decodedData = json.decode(converted);
     return decodedData;
   }
