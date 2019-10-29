@@ -3,9 +3,9 @@ import 'package:pokedex/providers/PokemonSpeciesListProvider.dart';
 import 'package:pokedex/widgets/PokemonHorizontal.dart';
 
 class PokedexHomePage extends StatelessWidget {
-  
   static const String route = "home";
   final PokemonSpeciesListProvider _provider = new PokemonSpeciesListProvider();
+  bool first = true;
 
   // Widget get _button {
   //   return new Container(
@@ -15,25 +15,22 @@ class PokedexHomePage extends StatelessWidget {
   //   );
   // }
 
-  Widget _footer(BuildContext context){
-
+  Widget _footer(BuildContext context) {
     return Container(
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 20.0),
-            child: Text('Populares', style: Theme.of(context).textTheme.subhead  )
-          ),
+              padding: EdgeInsets.only(left: 20.0),
+              child: Text('Populares',
+                  style: Theme.of(context).textTheme.subhead)),
           SizedBox(height: 5.0),
-  
           StreamBuilder(
             stream: _provider.speciesStream,
             builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-              
-              if ( snapshot.hasData ) {
-                return PokemonHorizontal( 
+              if (snapshot.hasData) {
+                return PokemonHorizontal(
                   species: snapshot.data,
                   next: _provider.getMore,
                 );
@@ -42,33 +39,26 @@ class PokedexHomePage extends StatelessWidget {
               }
             },
           ),
-
         ],
       ),
     );
-
-
   }
-  
-  
+
   @override
   Widget build(BuildContext context) {
-    _provider.getMore();
+    if (first) {
+      _provider.getMore();
+      first = false;
+    }
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text("Pokédex"),
-        backgroundColor: Colors.teal
-      ),
-      body: Container(
-        child: Column(
+        appBar: AppBar(
+            centerTitle: true,
+            title: Text("Pokédex"),
+            backgroundColor: Colors.teal),
+        body: Container(
+            child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            _footer(context)
-          ],
-        )
-      )
-    );
+          children: <Widget>[_footer(context)],
+        )));
   }
-
 }

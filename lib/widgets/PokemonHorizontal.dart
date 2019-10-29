@@ -50,9 +50,6 @@ class PokemonSpeciesHorizontalCard
     }
   }
 
-  void getDetails(PokemonSpecies species) {
-    log("DETAILS OF " + species.names["es"]);
-  }
 
   Widget _tarjeta(BuildContext context) {
     final tarjeta = Card(
@@ -62,7 +59,7 @@ class PokemonSpeciesHorizontalCard
         children: <Widget>[
           GestureDetector(
             onTap: () {
-              getDetails(species);
+              log("DETAILS OF " + species.names["es"]);
               Navigator.pushNamed(context, PokemonSpeciesDetail.route, arguments: species);
             } ,
             child:Hero(

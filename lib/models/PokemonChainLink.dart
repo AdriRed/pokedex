@@ -1,3 +1,4 @@
+import 'package:pokedex/HelperMethods.dart';
 import 'package:pokedex/providers/Provider.dart';
 
 import 'PokemonSpecies.dart';
@@ -14,10 +15,14 @@ class PokemonChainLink {
     }
   }
 
-  Future getAllInfo() async {
-    await specie.getInfo();
-    for (var evolution in evolutions) {
-      await evolution.getAllInfo();
+  List<Future<void>> getAllInfo() {
+    List<dynamic> allevos = HelperMethods.unwrapList(evolutions);
+    List<Future<void>> allgets = [specie.getInfo()];
+
+    for (var item in allevos) {
+      allgets.add(item.specie.getInfo());
     }
+
+    return allgets;
   }
 }

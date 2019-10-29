@@ -16,7 +16,7 @@ class Provider<T extends Model> {
     HttpClient http = new HttpClient();
 
     String route = url.split("pokeapi.co/")[1];
-    //log(route);
+    log(route);
     try {
       var uri = new Uri.https("pokeapi.co", route);
       //log("GET JSON: " + uri.toString());
