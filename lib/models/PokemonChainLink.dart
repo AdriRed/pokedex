@@ -13,4 +13,11 @@ class PokemonChainLink {
       evolutions.add(new PokemonChainLink.fromJSON(evolution));
     }
   }
+
+  Future getAllInfo() async {
+    await specie.getInfo();
+    for (var evolution in evolutions) {
+      await evolution.getAllInfo();
+    }
+  }
 }

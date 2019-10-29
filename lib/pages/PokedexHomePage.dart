@@ -4,7 +4,8 @@ import 'package:pokedex/widgets/PokemonHorizontal.dart';
 
 class PokedexHomePage extends StatelessWidget {
   
-  PokemonSpeciesListProvider _provider = new PokemonSpeciesListProvider();
+  static const String route = "home";
+  final PokemonSpeciesListProvider _provider = new PokemonSpeciesListProvider();
 
   // Widget get _button {
   //   return new Container(
@@ -26,7 +27,7 @@ class PokedexHomePage extends StatelessWidget {
             child: Text('Populares', style: Theme.of(context).textTheme.subhead  )
           ),
           SizedBox(height: 5.0),
-
+  
           StreamBuilder(
             stream: _provider.speciesStream,
             builder: (BuildContext context, AsyncSnapshot<List> snapshot) {

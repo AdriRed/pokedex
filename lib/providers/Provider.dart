@@ -7,9 +7,11 @@ import 'package:pokedex/models/Model.dart';
 class Provider<T extends Model> {
   String url;
   T info;
+  static Repository repo = new Repository();
 
   Future<T> getInfo() async {
     if (info != null) return null;
+    if (await repo.pop(url) != null) return await repo.pop(url) as T;
 
     HttpClient http = new HttpClient();
 
@@ -33,6 +35,7 @@ class Provider<T extends Model> {
 
     
     //log("info returned " + info.runtimeType.toString());
+    repo.add(url, info);
     return info;
   }
 
@@ -41,4 +44,18 @@ class Provider<T extends Model> {
   Provider(String uri) {
     this.url = uri;
   }
+}
+
+class Repository {
+  Map<String, dynamic> _repo = new Map();
+  
+  void add(String k, dynamic v) async {
+    _repo.putIfAbsent(k, () => v);
+  }
+
+  dynamic pop(String k) async {
+    if (!_repo.containsKey(k)) return null;
+    return _repo[k];
+  }
+
 }
