@@ -8,7 +8,7 @@ class PokemonBaseStat implements Model {
     id = json["id"];
     names = new Map();
     for (var name in json["names"]) {
-      names.putIfAbsent(name["language"]["name"], name["name"]);
+      names.putIfAbsent(name["language"]["name"], () => name["name"]);
     }
   }
 }

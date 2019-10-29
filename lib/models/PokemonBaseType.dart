@@ -8,6 +8,6 @@ class PokemonBaseType implements Model {
     id = json["id"];
     names = new Map<String, String>();
     for (var item in json["names"])
-      names.putIfAbsent(item["language"]["name"], item["name"]);
+      names.putIfAbsent(item["language"]["name"], () => item["name"]);
   }
 }

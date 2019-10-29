@@ -9,7 +9,7 @@ class PokemonBaseAbility implements Model {
     names = new Map();
     for (var flavorText in json["flavor_text_entries"]) {
       names.putIfAbsent(
-          flavorText["language"]["name"], flavorText["flavor_text"]);
+          flavorText["language"]["name"], () => flavorText["flavor_text"]);
     }
   }
 }
