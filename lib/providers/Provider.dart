@@ -10,8 +10,8 @@ class Provider<T extends Model> {
   static Repository repo = new Repository();
 
   Future<T> getInfo() async {
-    if (info != null) return null;
-    if (await repo.pop(url) != null) return await repo.pop(url) as T;
+    if (info != null) return info;
+    if (await repo.pop(url) != null) return (await repo.pop(url) as T);
 
     HttpClient http = new HttpClient();
 
@@ -38,6 +38,8 @@ class Provider<T extends Model> {
     repo.add(url, info);
     return info;
   }
+
+  
 
   
 

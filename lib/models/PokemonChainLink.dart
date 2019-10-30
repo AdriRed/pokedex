@@ -25,4 +25,8 @@ class PokemonChainLink {
 
     return allgets;
   }
+
+  // Future<void> getInfo() {
+  //   specie.getInfo()
+  // }
 }
