@@ -11,7 +11,14 @@ class Provider<T extends Model> {
 
   Future<T> getInfo() async {
     if (info != null) return info;
-    if (await repo.pop(url) != null) return (await repo.pop(url) as T);
+    
+    {
+      T repoitem = await repo.pop(url) as T;
+      if (repoitem != null) {
+        info = repoitem;
+        return repoitem;
+      }
+    }
 
     HttpClient http = new HttpClient();
 
@@ -29,19 +36,12 @@ class Provider<T extends Model> {
       T object = new Model.fromJSON(T, decoded);
       //log(object.runtimeType.toString());
       info = object;
-    } catch (e) {
-    }
+    } catch (e) {}
 
-
-    
     //log("info returned " + info.runtimeType.toString());
     repo.add(url, info);
     return info;
   }
-
-  
-
-  
 
   Provider(String uri) {
     this.url = uri;
@@ -50,14 +50,13 @@ class Provider<T extends Model> {
 
 class Repository {
   Map<String, dynamic> _repo = new Map();
-  
-  void add(String k, dynamic v) async {
+
+  void add(String k, dynamic v) {
     _repo.putIfAbsent(k, () => v);
   }
 
-  dynamic pop(String k) async {
+  Future<dynamic> pop(String k) async {
     if (!_repo.containsKey(k)) return null;
     return _repo[k];
   }
-
 }

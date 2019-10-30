@@ -16,11 +16,11 @@ class PokemonChainLink {
   }
 
   List<Future<void>> getAllInfo() {
-    List<dynamic> allevos = HelperMethods.unwrapList(evolutions);
+    
     List<Future<void>> allgets = [specie.getInfo()];
 
-    for (var item in allevos) {
-      allgets.add(item.specie.getInfo());
+    for (var item in evolutions) {
+      allgets.addAll(item.getAllInfo());
     }
 
     return allgets;

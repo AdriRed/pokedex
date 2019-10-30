@@ -14,44 +14,54 @@ class PokemonSpeciesDetail extends StatelessWidget {
 
   PokemonSpeciesDetail(this.species);
   // https://stackoverflow.com/questions/23969680/waiting-for-futures-raised-by-other-futures?rq=1
-  Future<void> getAllVarieties() {
+  Future<void> getAllVarieties() async {
     List<Future<dynamic>> varietiesFutures = [];
     //log("Varieties from: " + species.names["es"]);
     species.varieties.forEach((variety) {
       varietiesFutures.add(variety.pokemon.getInfo().then((pokemon) {
-        List<Future<dynamic>> typesFutures = [];
-        pokemon.types.forEach((typeProv) {
-          
-        })
+        List<Future<dynamic>> futures = [];
+        futures.add(futureAllTypes(pokemon));
+        futures.add(futureAllAbilities(pokemon));
+        futures.add(futureStats(pokemon));
+        return Future.wait(futures);
       }));
     });
+    varietiesFutures.add(futureEvolution(species));
     return Future.wait<dynamic>(varietiesFutures);
   }
 
-  Future<void> getAllTypes(Pokemon variety) async {
+  Future<void> futureAllTypes(Pokemon variety) async {
     // for (var variety in species.varieties) {
-    log("Types from variety: " + variety.id.toString());
+    List<Future<dynamic>> futures = [];
     for (var type in variety.types) {
-      await type.type.getInfo();
+      futures.add(type.type.getInfo());
     }
     // }
     variety.types.sort((x, y) => x.slot - y.slot);
+    return Future.wait(futures);
   }
 
-  Future<void> getAllAbilities(Pokemon variety) async {
-    // for (var variety in species.varieties) {
-    log("Abilities from variety: " + variety.id.toString());
-    for (var ability in variety.abilities) {
-      await ability.ability.getInfo();
+  Future<void> futureAllAbilities(Pokemon variety) async {
+    List<Future<dynamic>> futures = [];
+    for (var abilitiyProv in variety.abilities) {
+      futures.add(abilitiyProv.ability.getInfo());
     }
-    // }
+    return Future.wait(futures);
   }
 
-  Future<void> getEvolutionChain(PokemonSpecies species) async {
-    log("Evolutions from species: " + species.names["es"]);
-    await species.evolutionChain
+  Future<void> futureEvolution(PokemonSpecies species) async {
+    //log("Evolutions from species: " + species.names["es"]);
+    return species.evolutionChain
         .getInfo()
         .then((x) => Future.wait(x.chain.getAllInfo()));
+  }
+
+  Future<void> futureStats(Pokemon variety) async {
+    List<Future<dynamic>> futures = [];
+    for (var statProv in variety.stats) {
+      futures.add(statProv.stat.getInfo());
+    }
+    return Future.wait(futures);
   }
 
   // List<Future<void>> getAllEvolutions(PokemonEvolutionChain evochain) async{
@@ -59,21 +69,28 @@ class PokemonSpeciesDetail extends StatelessWidget {
   //   await evochain.chain.getAllInfo();
   // }
 
-  Future<void> getStats() async {}
-
   Widget _data(PokemonSpecies species) {
     return Column(
       children: [
-        _types(species.varieties[0].pokemon.info.types) /*, _evolutions*/
+        _types,
+        _stats
       ],
     );
   }
 
-  Widget _types(List<PokemonType> types) {
+  Widget get _stats {
+    return Column(
+      children: species.varieties[0].pokemon.info.stats.map((stat) => 
+        Text(stat.stat.info.names["es"] + " -> " + stat.value.toString()))
+        .toList()
+      );
+  }
+
+  Widget get _types {
     return Row(
-        children: types
+        children: species.varieties[0].pokemon.info.types
             .map((type) =>
-                Text(type.slot.toString() + " - " + type.type.info.names["es"]))
+                Text(type.slot.toString() + " - " + type.type.info.names["es"] + " "))
             .toList());
   }
 
@@ -85,13 +102,7 @@ class PokemonSpeciesDetail extends StatelessWidget {
           backgroundColor: Colors.red, title: new Text(species.names["es"])),
       body: Container(
         child: FutureBuilder(
-          future: Future.wait<dynamic>([
-            getAllVarieties(),
-            // getAllAbilities(),
-            // getAllTypes(),
-            //getEvolutionChain(species),
-            //...species.evolutionChain.info.chain.getAllInfo()
-          ]),
+          future: getAllVarieties(),
           builder: (builder, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasError) return Icon(Icons.close);
