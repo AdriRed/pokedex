@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/models/PokemonSpeciesList.dart';
+import 'package:pokedex/providers/Provider.dart';
 
 class PokemonSpeciesListProvider {
   String next;
@@ -14,18 +15,18 @@ class PokemonSpeciesListProvider {
   final int _limit = 15;
   bool loading = false;
 
-  final _streamController = StreamController<List<PokemonSpecies>>.broadcast();
+  final _streamController = StreamController<List<Provider<PokemonSpecies>>>.broadcast();
 
-  Function(List<PokemonSpecies>) get speciesSink => _streamController.sink.add;
-  Stream<List<PokemonSpecies>> get speciesStream => _streamController.stream;
+  Function(List<Provider<PokemonSpecies>>) get speciesSink => _streamController.sink.add;
+  Stream<List<Provider<PokemonSpecies>>> get speciesStream => _streamController.stream;
 
-  List<PokemonSpecies> _species = new List();
+  List<Provider<PokemonSpecies>> _species = new List();
 
   void disposeStream() {
     _streamController?.close();
   }
 
-  Future<List<PokemonSpecies>> getMore() async {
+  Future<List<Provider<PokemonSpecies>>> getMore() async {
     if (loading) return null;
 
     loading = true;
@@ -44,7 +45,7 @@ class PokemonSpeciesListProvider {
     
     _total += list.species.length;
     
-    final resp = await list.getPokemonSpecies();
+    final resp = list.species;
     _species.addAll(resp);
     speciesSink(_species);
 

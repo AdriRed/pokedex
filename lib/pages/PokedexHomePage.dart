@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/providers/PokemonSpeciesListProvider.dart';
+import 'package:pokedex/providers/Provider.dart';
 import 'package:pokedex/widgets/PokemonHorizontal.dart';
 
 class PokedexHomePage extends StatelessWidget {
@@ -28,11 +30,11 @@ class PokedexHomePage extends StatelessWidget {
           SizedBox(height: 5.0),
           StreamBuilder(
             stream: _provider.speciesStream,
-            builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<List<Provider<PokemonSpecies>>> snapshot) {
               if (snapshot.hasData) {
                 return PokemonHorizontal(
-                  species: snapshot.data,
-                  next: _provider.getMore,
+                  snapshot.data,
+                  _provider.getMore,
                 );
               } else {
                 return Center(child: CircularProgressIndicator());
