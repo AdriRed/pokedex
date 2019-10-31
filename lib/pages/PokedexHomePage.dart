@@ -9,14 +9,6 @@ class PokedexHomePage extends StatelessWidget {
   final PokemonSpeciesListProvider _provider = new PokemonSpeciesListProvider();
   bool first = true;
 
-  // Widget get _button {
-  //   return new Container(
-  //     child: new FloatingActionButton(
-  //       child: Icon(Icons.add)
-  //     )
-  //   );
-  // }
-
   Widget _footer(BuildContext context) {
     return Container(
       width: double.infinity,

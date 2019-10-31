@@ -26,6 +26,12 @@ class PokemonChainLink {
     return allgets;
   }
 
+  // List<List<Provider<PokemonSpecies>>> orderedEvos(PokemonChainLink chain) {
+  //   List<List<Provider<PokemonSpecies>>> ordered = [];
+  //   ordered.add([specie]);
+  //   List<Provider<PokemonSpecies>> zone = evolutions.map((evolution) => orderedEvos(evolution).toList();
+  //   ordered.add([].addAll().toList()));
+  // }
   // Future<void> getInfo() {
   //   specie.getInfo()
   // }

@@ -3,9 +3,13 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/Pokemon.dart';
+import 'package:pokedex/models/PokemonChainLink.dart';
 import 'package:pokedex/models/PokemonEvolutionChain.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'dart:async';
+
+import 'package:pokedex/providers/Provider.dart';
+import 'package:pokedex/widgets/PokemonSpeciesHorizontalCard.dart';
 
 class PokemonSpeciesDetail extends StatelessWidget {
   static const String route = "detail";
@@ -64,16 +68,30 @@ class PokemonSpeciesDetail extends StatelessWidget {
     return Future.wait(futures);
   }
 
+  Widget _evolutions(PokemonChainLink evolution) {
+    return ListView(  
+      shrinkWrap: true,
+      controller: ScrollController(),
+      children: <Widget>[
+        PokemonSpeciesHorizontalCard(evolution.specie),
+        ...evolution.evolutions.map((evo) => PokemonSpeciesHorizontalCard(evo.specie))
+      ],
+
+    );
+  }
+
   // List<Future<void>> getAllEvolutions(PokemonEvolutionChain evochain) async{
   //   log("chain from " + evochain.id.toString());
   //   await evochain.chain.getAllInfo();
   // }
 
   Widget _data(PokemonSpecies species) {
-    return Column(
+    return ListView(
+      shrinkWrap: true,
       children: [
         _types,
-        _stats
+        _stats,
+        _evolutions(species.evolutionChain.info.chain)
       ],
     );
   }

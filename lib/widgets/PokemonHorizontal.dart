@@ -14,7 +14,7 @@ class PokemonHorizontal extends StatelessWidget {
   PokemonHorizontal(this.species,this.next);
 
   final _pageController =
-      new PageController(initialPage: 1, viewportFraction: 0.3);
+      new PageController(initialPage: 1, viewportFraction: 0.3, keepPage: true);
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +33,7 @@ class PokemonHorizontal extends StatelessWidget {
       child: PageView.builder(
         pageSnapping: false,
         controller: _pageController,
+        
         // children: _tarjetas(context),
         itemCount: species.length,
         itemBuilder: (context, i) => new PokemonSpeciesHorizontalCard(species[i]),

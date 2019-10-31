@@ -1,6 +1,7 @@
 
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
@@ -15,7 +16,6 @@ class PokemonSpeciesHorizontalCard extends StatefulWidget {
   
   @override
   State<StatefulWidget> createState() {
-    
     return _PokemonSpeciesHorizontalCardState(speciesProv);
   }
 
@@ -73,12 +73,13 @@ class _PokemonSpeciesHorizontalCardState extends State<PokemonSpeciesHorizontalC
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.done) {
                             return Center(
-                              child: FadeInImage(
-                                image: NetworkImage(
-                                    species.info.varieties[0].pokemon.info.sprites["front_default"]),
-                              placeholder: AssetImage('assets/poke-ball.png'),
+                              child: CachedNetworkImage(
+                                imageUrl: species.info.varieties[0].pokemon.info.sprites["front_default"],
+                              placeholder: (context, url) => Image.asset('assets/poke-ball.png'),
                               fit: BoxFit.scaleDown,
                               height: 100.0,
+                              fadeOutDuration: Duration(milliseconds: 300),
+                              filterQuality: FilterQuality.none,
                             ));
                           } else {
                             return Center(
@@ -125,23 +126,30 @@ class _PokemonSpeciesHorizontalCardState extends State<PokemonSpeciesHorizontalC
     return Center(child: CircularProgressIndicator());
   }
 
+  Widget get _futureBuilder {
+    return FutureBuilder (
+        future: species.getInfo(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError)
+              return Center(child: Icon(Icons.close));
+            else
+              return _data;
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return _loading;
+          } else {
+            ;
+          }
+        }
+    );
+  }
+
   Widget _tarjeta(BuildContext context) {
     final tarjeta = Card(
       margin: EdgeInsets.all(5),
       color: Colors.grey,
-      child: FutureBuilder (
-        future: species.getInfo(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return _data;
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return _loading;
-          } else {
-            return Center(child: Icon(Icons.close));
-          }
-        }
+      child: species.hasInfo ? _data : _futureBuilder
         
-      ),
     );
     return tarjeta;
   }

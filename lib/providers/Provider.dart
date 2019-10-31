@@ -3,20 +3,38 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:developer';
 import 'package:pokedex/models/Model.dart';
+import 'package:pokedex/providers/Locker.dart';
 
 class Provider<T extends Model> {
   String url;
   T info;
+  Locker locker = LockManager.getLocker();
   static Repository repo = new Repository();
 
+  bool get hasInfo {
+    return info != null;
+  }
+
   Future<T> getInfo() async {
-    if (info != null) return info;
     
+    _recall() {
+      return getInfo();
+    }
+    
+    if (locker.locked) return await locker.waitLock();
+    locker.setFunction(_recall);
+    locker.lock();
+
+    if (hasInfo) {
+      locker.unlock();
+      return info;
+    }
+
     {
-      T repoitem = await repo.pop(url) as T;
-      if (repoitem != null) {
-        info = repoitem;
-        return repoitem;
+      if (repo.exists(url)) {
+        info = await repo.pop(url) as T;
+        locker.unlock();
+        return info;
       }
     }
 
@@ -29,6 +47,10 @@ class Provider<T extends Model> {
       //log("GET JSON: " + uri.toString());
       var request = await http.getUrl(uri);
       var response = await request.close();
+      if (response.statusCode == 404) {
+        locker.unlock();
+        return null;
+      }
       var responseBody = await response.transform(utf8.decoder).join();
       //log(responseBody);
       var decoded = json.decode(responseBody);
@@ -36,10 +58,13 @@ class Provider<T extends Model> {
       T object = new Model.fromJSON(T, decoded);
       //log(object.runtimeType.toString());
       info = object;
-    } catch (e) {}
+    } catch (e) {
+      log(e.toString());
+    }
 
     //log("info returned " + info.runtimeType.toString());
     repo.add(url, info);
+    locker.unlock();
     return info;
   }
 
@@ -50,6 +75,10 @@ class Provider<T extends Model> {
 
 class Repository {
   Map<String, dynamic> _repo = new Map();
+
+  bool exists(String k) {
+    return _repo.containsKey(k);
+  }
 
   void add(String k, dynamic v) {
     _repo.putIfAbsent(k, () => v);
