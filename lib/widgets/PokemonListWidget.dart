@@ -7,7 +7,7 @@ import 'package:pokedex/providers/Provider.dart';
 import 'PokemonSpeciesCard.dart';
 
 class PokemonListWidget extends StatelessWidget {
-  final double cardWidth = 40, cardHeight = 60;
+  final double cardWidth = 40, cardHeight = 66;
 
   final List<Provider<PokemonSpecies>> species;
   final Function next;

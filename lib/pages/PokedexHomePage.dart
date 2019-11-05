@@ -15,11 +15,6 @@ class PokedexHomePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-              padding: EdgeInsets.only(left: 20.0),
-              child: Text('Populares',
-                  style: Theme.of(context).textTheme.subhead)),
-          SizedBox(height: 5.0),
           StreamBuilder(
             stream: _provider.speciesStream,
             builder: (BuildContext context, AsyncSnapshot<List<Provider<PokemonSpecies>>> snapshot) {

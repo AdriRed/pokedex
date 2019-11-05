@@ -71,12 +71,10 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard> with TickerProv
                     onTap: () {
                       log("DETAILS OF " + species.info.names["es"]);
                       Navigator.pushNamed(context, PokemonSpeciesDetail.route, arguments: species.info);
-                    } ,
-                    child:Hero(
+                    },
+                    child: Hero(
                       tag: "${species.info.id} - card",
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: new FutureBuilder<void>(
+                      child: new FutureBuilder<void>(
                           future: getVarieties(species.info),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState == ConnectionState.done) {
@@ -108,11 +106,10 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard> with TickerProv
                             
                           }
                         ),
-                      ),
                     ),
                   ),
                 ),
-                SizedBox(height: 5.0),
+                Divider(color: Colors.black, indent: 3, endIndent: 3,),
                 Text(
                   species.info.names["es"],
                   overflow: TextOverflow.ellipsis,
@@ -153,20 +150,20 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard> with TickerProv
           } else if (snapshot.connectionState == ConnectionState.waiting) {
             return _loading;
           } else {
-            ;
+            return Container();
           }
         }
     );
   }
 
-  Widget _tarjeta(BuildContext context) {
+  Widget _card(BuildContext context) {
     final tarjeta = Container(
       height: height,
       width: width,
       child: Card(
-        margin: EdgeInsets.all(5),
-        color: Colors.white,
-        child: species.hasInfo ? _data : _futureBuilder
+          margin: EdgeInsets.all(5),
+          color: Colors.white,
+          child: species.hasInfo ? _data : _futureBuilder
         )
     );
     return tarjeta;
@@ -174,7 +171,7 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard> with TickerProv
 
   @override
   Widget build(BuildContext context) {
-    return _tarjeta(context);
+    return _card(context);
   }
 
   // @override

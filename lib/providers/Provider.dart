@@ -8,7 +8,7 @@ import 'package:pokedex/providers/Locker.dart';
 class Provider<T extends Model> {
   String url;
   T info;
-  Locker locker = LockManager.getLocker();
+  Locker _locker = LockManager.getLocker();
   static Repository repo = new Repository();
 
   bool get hasInfo {
@@ -21,19 +21,19 @@ class Provider<T extends Model> {
       return getInfo();
     }
     
-    if (locker.locked) return await locker.waitLock();
-    locker.setFunction(_recall);
-    locker.lock();
+    if (_locker.locked) return await _locker.waitLock();
+    _locker.setFunction(_recall);
+    _locker.lock();
 
     if (hasInfo) {
-      locker.unlock();
+      _locker.unlock();
       return info;
     }
 
     {
       if (repo.exists(url)) {
         info = await repo.pop(url) as T;
-        locker.unlock();
+        _locker.unlock();
         return info;
       }
     }
@@ -48,7 +48,7 @@ class Provider<T extends Model> {
       var request = await http.getUrl(uri);
       var response = await request.close();
       if (response.statusCode == 404) {
-        locker.unlock();
+        _locker.unlock();
         return await getInfo();
       }
       var responseBody = await response.transform(utf8.decoder).join();
@@ -64,7 +64,7 @@ class Provider<T extends Model> {
 
     //log("info returned " + info.runtimeType.toString());
     repo.add(url, info);
-    locker.unlock();
+    _locker.unlock();
     return info;
   }
 
