@@ -38,6 +38,10 @@ class PokemonSpecies implements Model {
 
     evolutionChain = new Provider(json["evolution_chain"]["url"]);
   }
+
+  PokemonVariety get defaultVariety {
+    return varieties.singleWhere((x) => x.isDefault);
+  }
 }
 
 class PokemonVariety {
@@ -47,5 +51,10 @@ class PokemonVariety {
   PokemonVariety.fromJSON(Map<String, dynamic> json) {
     isDefault = json["is_default"];
     pokemon = new Provider(json["pokemon"]["url"]);
+  }
+
+  int compareTo(PokemonVariety other) {
+    if (this.isDefault) return 1;
+    else return -1;
   }
 }

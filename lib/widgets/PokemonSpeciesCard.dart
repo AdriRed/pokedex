@@ -58,6 +58,7 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard> with TickerProv
     for (var variety in species.varieties) {
       futures.add(variety.pokemon.getInfo());
     }
+    
     return Future.wait(futures);
   }
 
@@ -81,7 +82,7 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard> with TickerProv
                             if (snapshot.connectionState == ConnectionState.done) {
                               return Center(
                                 child: FadeInImage(
-                                  image: NetworkImage(species.info.varieties[0].pokemon.info.sprites["front_default"]),
+                                  image: NetworkImage(species.info.defaultVariety.pokemon.info.sprites["front_default"] ?? ""),
                                   placeholder: AssetImage('assets/poke-ball.png'),
                                   height: 100.0,
                                   fadeOutDuration: Duration(milliseconds: 300),

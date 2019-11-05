@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:pokedex/models/Model.dart';
 import 'package:pokedex/providers/Provider.dart';
 import 'package:pokedex/models/PokemonBaseStat.dart';

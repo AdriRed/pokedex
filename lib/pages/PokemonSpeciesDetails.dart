@@ -146,7 +146,9 @@ class PokemonSpeciesDetail extends StatelessWidget {
       child: Center(
         child: Card(
           child: Image(
-            image: NetworkImage(species.varieties[varietyIndex].pokemon.info.sprites["front_default"]),
+            image: species.varieties[varietyIndex].pokemon.info.sprites["front_default"] != null ? 
+              NetworkImage(species.varieties[varietyIndex].pokemon.info.sprites["front_default"])
+              : AssetImage("assets/poke-ball.png"),
             filterQuality: FilterQuality.none,
             width: 250,
             height: 250,
