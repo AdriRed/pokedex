@@ -49,7 +49,7 @@ class Provider<T extends Model> {
       var response = await request.close();
       if (response.statusCode == 404) {
         locker.unlock();
-        return null;
+        return await getInfo();
       }
       var responseBody = await response.transform(utf8.decoder).join();
       //log(responseBody);

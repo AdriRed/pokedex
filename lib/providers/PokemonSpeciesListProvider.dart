@@ -12,7 +12,7 @@ class PokemonSpeciesListProvider {
   String next;
   int _page = 0;
   int _total = 0;
-  final int _limit = 15;
+  final int _limit = 16;
   bool loading = false;
 
   final _streamController = StreamController<List<Provider<PokemonSpecies>>>.broadcast();
@@ -41,7 +41,7 @@ class PokemonSpeciesListProvider {
     var json = await _procesarRespuesta(url);
 
 
-    PokemonSpeciesList list = new PokemonSpeciesList.fromJSON(json);
+    PokemonSpeciesList list = new PokemonSpeciesList.fromJSON(json, "results");
     
     _total += list.species.length;
     

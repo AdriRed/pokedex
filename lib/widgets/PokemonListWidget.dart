@@ -2,19 +2,20 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
-import 'package:pokedex/pages/PokemonSpeciesDetails.dart';
 import 'package:pokedex/providers/Provider.dart';
 
-import 'PokemonSpeciesHorizontalCard.dart';
+import 'PokemonSpeciesCard.dart';
 
-class PokemonHorizontal extends StatelessWidget {
+class PokemonListWidget extends StatelessWidget {
+  final double cardWidth = 40, cardHeight = 60;
+
   final List<Provider<PokemonSpecies>> species;
   final Function next;
 
-  PokemonHorizontal(this.species,this.next);
+  PokemonListWidget(this.species,this.next);
 
   final _pageController =
-      new PageController(initialPage: 1, viewportFraction: 0.3, keepPage: true);
+      new PageController(initialPage: 1, viewportFraction: 0.4, keepPage: true);
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +29,16 @@ class PokemonHorizontal extends StatelessWidget {
     });
 
     return Container(
-      height: _screenSize.height * 0.21,
+      height: _screenSize.height * 0.80,
       color: Colors.blueGrey,
-      child: PageView.builder(
-        pageSnapping: false,
+      child: GridView.count(
+
         controller: _pageController,
-        
+        crossAxisCount: 4,
+        childAspectRatio: (cardWidth / cardHeight),
+        //shrinkWrap: true,
         // children: _tarjetas(context),
-        itemCount: species.length,
-        itemBuilder: (context, i) => new PokemonSpeciesHorizontalCard(species[i]),
+        children: List.generate(species.length, (index) => new PokemonSpeciesCard(species[index], cardWidth, cardHeight))
       ),
     );
   }

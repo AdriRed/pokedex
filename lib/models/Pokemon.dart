@@ -22,7 +22,7 @@ class Pokemon implements Model {
     types = new List();
     abilities = new List();
 
-
+  
     for (var stat in json["stats"]) {
       stats.add(new PokemonStat.fromJSON(stat));
     }    

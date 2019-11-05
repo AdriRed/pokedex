@@ -9,14 +9,16 @@ import 'package:pokedex/models/PokemonSpecies.dart';
 import 'dart:async';
 
 import 'package:pokedex/providers/Provider.dart';
-import 'package:pokedex/widgets/PokemonSpeciesHorizontalCard.dart';
+import 'package:pokedex/widgets/PokemonSpeciesCard.dart';
 
 class PokemonSpeciesDetail extends StatelessWidget {
+  int varietyIndex = 0;
   static const String route = "detail";
 
   final PokemonSpecies species;
 
   PokemonSpeciesDetail(this.species);
+
   // https://stackoverflow.com/questions/23969680/waiting-for-futures-raised-by-other-futures?rq=1
   Future<void> getAllVarieties() async {
     List<Future<dynamic>> varietiesFutures = [];
@@ -30,6 +32,7 @@ class PokemonSpeciesDetail extends StatelessWidget {
         return Future.wait(futures);
       }));
     });
+    //species.varieties.sort((a, b) => a.isDefault ? 1 : -1);
     varietiesFutures.add(futureEvolution(species));
     return Future.wait<dynamic>(varietiesFutures);
   }
@@ -69,47 +72,146 @@ class PokemonSpeciesDetail extends StatelessWidget {
   }
 
   Widget _evolutions(PokemonChainLink evolution) {
-    return ListView(  
-      shrinkWrap: true,
-      controller: ScrollController(),
-      children: <Widget>[
-        PokemonSpeciesHorizontalCard(evolution.specie),
-        ...evolution.evolutions.map((evo) => PokemonSpeciesHorizontalCard(evo.specie))
-      ],
+    List<Provider<PokemonSpecies>> allevos = evolution.orderedEvos();
 
+
+    return Card(
+      child: ListView(  
+        shrinkWrap: true,
+        controller: ScrollController(),
+        padding: EdgeInsets.all(5),
+        children: [
+            Container(
+              margin: EdgeInsets.fromLTRB(10, 5, 0, 3),
+              child:  Text("Evolution chain",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)
+            ), 
+            //Divider(color: Colors.black),
+            ...List.generate(allevos.length, (index) => PokemonSpeciesCard(allevos[index], 1, 140))
+            ],
+      )
     );
   }
 
-  // List<Future<void>> getAllEvolutions(PokemonEvolutionChain evochain) async{
-  //   log("chain from " + evochain.id.toString());
-  //   await evochain.chain.getAllInfo();
-  // }
+  Widget get _details {
+    return Container(
+      child: Card(
+        child: Padding(
+          padding: EdgeInsets.all(5),
+          child: Column(
+            children: [
+              _name,
+              Divider(color: Colors.black),
+              _generaTypes,
+              Divider(color: Colors.black),
+              _description,
+            ]
+          )
+        )
+      )
+    );
+  }
+  Widget get _description {
+    return _text(species.descriptionEntries["es"], Colors.black, false, 15);
+  }
+  Widget _text(String text, Color color, bool bold, double size) {
+
+    TextStyle style = TextStyle(color: color, fontSize: size, fontWeight: bold ? FontWeight.bold : FontWeight.normal);
+
+    return Text(text, style: style);
+  }
+
+  Widget get _name {
+    return _text("Nº" + species.id.toString() + " - " + species.names["es"], Colors.black, true, 20);
+  }
+
+  Widget get _genera {
+    return _text(species.genera["es"], Colors.black, false, 16);
+  }
 
   Widget _data(PokemonSpecies species) {
     return ListView(
       shrinkWrap: true,
       children: [
-        _types,
+        _image,
+        _details,
         _stats,
         _evolutions(species.evolutionChain.info.chain)
       ],
     );
   }
-
+  Widget get _image {
+    return Container(
+      width: 300,
+      height: 300,
+      child: Center(
+        child: Card(
+          child: Image(
+            image: NetworkImage(species.varieties[varietyIndex].pokemon.info.sprites["front_default"]),
+            filterQuality: FilterQuality.none,
+            width: 250,
+            height: 250,
+            fit: BoxFit.fill
+          )
+        )
+      )
+    );
+  }
+  
   Widget get _stats {
     return Column(
-      children: species.varieties[0].pokemon.info.stats.map((stat) => 
+      children: species.varieties[varietyIndex].pokemon.info.stats.map((stat) => 
         Text(stat.stat.info.names["es"] + " -> " + stat.value.toString()))
         .toList()
       );
   }
 
+  static var typeColors = <Color>[
+      new Color(0xFFa8a878),// Normal,
+      new Color(0xFFc03028),// Fighting,
+      new Color(0xFFa890f0),// Flying,
+      new Color(0xFFa040a0),// Poison,
+      new Color(0xFFe0c068),// Ground,
+      new Color(0xFFb8a038),// Rock,
+      new Color(0xFFa8b820),// Bug,
+      new Color(0xFF705898),// Ghost,
+      new Color(0xFFb8b8d0),// Steel,
+      new Color(0xFFf08030),// Fire,
+      new Color(0xFF6890f0),// Water,
+      new Color(0xFF78c850),// Grass,
+      new Color(0xFFf8d030),// Electric,
+      new Color(0xFFf85888),// Psychic,
+      new Color(0xFF98d8d8),// Ice,
+      new Color(0xFF7038f8),// Dragon,
+      new Color(0xFF705848),// Dark,
+      new Color(0xFFf0b6bc),// Fairy,
+      new Color(0xFF6aa596),// Unknown,
+      new Color(0xFF705898)// Shadow
+    ];
+
   Widget get _types {
+
     return Row(
-        children: species.varieties[0].pokemon.info.types
+        children: species.varieties[varietyIndex].pokemon.info.types
             .map((type) =>
-                Text(type.slot.toString() + " - " + type.type.info.names["es"] + " "))
+                Card(
+                  color: typeColors[type.type.info.id-1],
+                  child: new Padding(
+                    padding: EdgeInsets.all(8),
+                    child: new Text(
+                      type.type.info.names["es"].toUpperCase(), 
+                      style: new TextStyle(color: Colors.white, fontSize: 15),
+                    )
+                    )
+                )
+            )
             .toList());
+  }
+
+  Widget get _generaTypes {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[_genera, _types],
+    );
   }
 
   @override

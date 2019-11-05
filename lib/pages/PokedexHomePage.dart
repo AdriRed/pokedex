@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/providers/PokemonSpeciesListProvider.dart';
 import 'package:pokedex/providers/Provider.dart';
-import 'package:pokedex/widgets/PokemonHorizontal.dart';
+import 'package:pokedex/widgets/PokemonListWidget.dart';
 
 class PokedexHomePage extends StatelessWidget {
   static const String route = "home";
@@ -24,7 +24,7 @@ class PokedexHomePage extends StatelessWidget {
             stream: _provider.speciesStream,
             builder: (BuildContext context, AsyncSnapshot<List<Provider<PokemonSpecies>>> snapshot) {
               if (snapshot.hasData) {
-                return PokemonHorizontal(
+                return PokemonListWidget(
                   snapshot.data,
                   _provider.getMore,
                 );
