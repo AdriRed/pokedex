@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/Pokemon.dart';
+import 'package:pokedex/models/PokemonBaseType.dart';
 import 'package:pokedex/models/PokemonChainLink.dart';
 import 'package:pokedex/models/PokemonEvolutionChain.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
+import 'package:pokedex/pages/PokedexHomePage.dart';
 import 'dart:async';
 
 import 'package:pokedex/providers/Provider.dart';
@@ -13,7 +15,7 @@ import 'package:pokedex/widgets/PokemonSpeciesCard.dart';
 
 class PokemonSpeciesDetail extends StatelessWidget {
   int varietyIndex = 0;
-  static const String route = "detail";
+  static const String route = "/detail";
 
   final PokemonSpecies species;
 
@@ -82,15 +84,15 @@ class PokemonSpeciesDetail extends StatelessWidget {
       controller: ScrollController(),
       padding: EdgeInsets.all(5),
       children: [
-        Container(
-            margin: EdgeInsets.fromLTRB(10, 5, 0, 3),
-            child: Text(
-              "Evolution chain",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            )),
+        // Container(
+        //     margin: EdgeInsets.fromLTRB(10, 5, 0, 3),
+        //     child: Text(
+        //       "Evolution chain",
+        //       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        //     )),
         //Divider(color: Colors.black),
         ...List.generate(allevos.length,
-            (index) => PokemonSpeciesCard(allevos[index], 1, 140))
+            (index) => PokemonSpeciesCard(allevos[index], 1, 155))
       ],
     ));
   }
@@ -99,7 +101,7 @@ class PokemonSpeciesDetail extends StatelessWidget {
     return Container(
         child: Card(
             child: Padding(
-                padding: EdgeInsets.all(5),
+                padding: EdgeInsets.all(7),
                 child: Column(children: [
                   _name,
                   Divider(color: Colors.black),
@@ -170,34 +172,11 @@ class PokemonSpeciesDetail extends StatelessWidget {
             .toList());
   }
 
-  static var typeColors = <Color>[
-    new Color(0xFFa8a878), // Normal,
-    new Color(0xFFc03028), // Fighting,
-    new Color(0xFFa890f0), // Flying,
-    new Color(0xFFa040a0), // Poison,
-    new Color(0xFFe0c068), // Ground,
-    new Color(0xFFb8a038), // Rock,
-    new Color(0xFFa8b820), // Bug,
-    new Color(0xFF705898), // Ghost,
-    new Color(0xFFb8b8d0), // Steel,
-    new Color(0xFFf08030), // Fire,
-    new Color(0xFF6890f0), // Water,
-    new Color(0xFF78c850), // Grass,
-    new Color(0xFFf8d030), // Electric,
-    new Color(0xFFf85888), // Psychic,
-    new Color(0xFF98d8d8), // Ice,
-    new Color(0xFF7038f8), // Dragon,
-    new Color(0xFF705848), // Dark,
-    new Color(0xFFf0b6bc), // Fairy,
-    new Color(0xFF6aa596), // Unknown,
-    new Color(0xFF705898) // Shadow
-  ];
-
   Widget get _types {
     return Row(
         children: species.varieties[varietyIndex].pokemon.info.types
             .map((type) => Card(
-                color: typeColors[type.type.info.id - 1],
+                color: PokemonBaseType.colors[type.type.info.id - 1],
                 child: new Padding(
                     padding: EdgeInsets.all(8),
                     child: new Text(
@@ -217,9 +196,17 @@ class PokemonSpeciesDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 220, 220, 220),
+      backgroundColor: Color.fromARGB(255, 250, 250, 250),
       appBar: new AppBar(
-          backgroundColor: Colors.red, title: new Text(species.names["es"])),
+          backgroundColor: Colors.red, 
+          title: new Text(species.names["es"]),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () => Navigator.pushNamedAndRemoveUntil(context, PokedexHomePage.route, (_) => false)
+            ),
+          ]
+        ),
       body: Container(
         child: FutureBuilder(
           future: getAllVarieties(),

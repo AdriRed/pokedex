@@ -23,7 +23,7 @@ class PokemonSpeciesCard extends StatefulWidget {
 
 }
 
-class _PokemonSpeciesCardState extends State<PokemonSpeciesCard> with TickerProviderStateMixin  {
+class _PokemonSpeciesCardState extends State<PokemonSpeciesCard> with SingleTickerProviderStateMixin  {
   final Provider<PokemonSpecies> species;
   final double width, height;
 
@@ -37,11 +37,12 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard> with TickerProv
     _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: 5),
-    )..addListener(() => setState(() {}));
-    _animation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInExpo,
     );
+    // )..addListener(() => setState(() {}));
+    // _animation = CurvedAnimation(
+    //   parent: _controller,
+    //   curve: Curves.easeInExpo,
+    // );
     _controller.forward();
     super.initState();
   }
@@ -63,59 +64,93 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard> with TickerProv
   }
 
   Widget get _data {
-    return Column(
-              children: <Widget>[
-                Card(
-                  color: Colors.white70,
-                  child: GestureDetector(
-                    onTap: () {
-                      log("DETAILS OF " + species.info.names["es"]);
-                      Navigator.pushNamed(context, PokemonSpeciesDetail.route, arguments: species.info);
-                    },
-                    child: Hero(
-                      tag: "${species.info.id} - card",
-                      child: new FutureBuilder<void>(
-                          future: getVarieties(species.info),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.done) {
-                              return Center(
-                                child: FadeInImage(
-                                  image: NetworkImage(species.info.defaultVariety.pokemon.info.sprites["front_default"] ?? ""),
-                                  placeholder: AssetImage('assets/poke-ball.png'),
-                                  height: 100.0,
-                                  fadeOutDuration: Duration(milliseconds: 300),
-                                )
-                                // child: CachedNetworkImage(
-                                //   imageUrl: species.info.varieties[0].pokemon.info.sprites["front_default"],
-                                //   placeholder: (context, url) => Image.asset('assets/poke-ball.png'),
-                                //   fit: BoxFit.scaleDown,
-                                //   height: 100.0,
-                                //   fadeOutDuration: Duration(milliseconds: 300),
-                                //   filterQuality: FilterQuality.none,
-                                // )
-                              );
-                            } else {
-                              return Center(
-                                child: Image(
-                                image: AssetImage("assets/poke-ball.png"),
-                                fit: BoxFit.scaleDown,
-                                height: 100.0,
-                                filterQuality: FilterQuality.none,
-                              ));
-                            }
-                            
-                          }
-                        ),
-                    ),
-                  ),
-                ),
-                Divider(color: Colors.black, indent: 3, endIndent: 3,),
-                Text(
-                  species.info.names["es"],
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.subtitle,
-                )
-              ]);
+    return GestureDetector(
+        onTap: () {
+          log("DETAILS OF " + species.info.names["es"]);
+          Navigator.pushNamed(context, PokemonSpeciesDetail.route, arguments: species.info);
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+          child: Column(
+            children: <Widget>[
+              _image,
+              Divider(color: Colors.black, indent: 3, endIndent: 3,),
+              _name,
+            ])
+        )
+    );
+  }
+
+  Widget get _image {
+    return Card(
+      color: Colors.white70,
+      child: Hero(
+        tag: "${species.info.id} - card",
+        child: new FutureBuilder<void>(
+            future: getVarieties(species.info),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return Center(
+                  child: FadeInImage(
+                    image: NetworkImage(species.info.defaultVariety.pokemon.info.sprites["front_default"] ?? ""),
+                    placeholder: AssetImage('assets/poke-ball.png'),
+                    height: 100.0,
+                    fadeOutDuration: Duration(milliseconds: 300),
+                  )
+                  // child: CachedNetworkImage(
+                  //   imageUrl: species.info.varieties[0].pokemon.info.sprites["front_default"],
+                  //   placeholder: (context, url) => Image.asset('assets/poke-ball.png'),
+                  //   fit: BoxFit.scaleDown,
+                  //   height: 100.0,
+                  //   fadeOutDuration: Duration(milliseconds: 300),
+                  //   filterQuality: FilterQuality.none,
+                  // )
+                );
+              } else {
+                return Center(
+                  child: Image(
+                  image: AssetImage("assets/poke-ball.png"),
+                  fit: BoxFit.scaleDown,
+                  height: 100.0,
+                  filterQuality: FilterQuality.none,
+                ));
+              }
+              
+            }
+          ),
+      )
+    );
+  }
+
+  Widget get _name {
+    // return Container(
+    //   //width: 1,
+    //   child: Stack(
+    //     children: [
+    //       Container(
+    //         alignment: Alignment.center,
+    //         child: Text(
+    //           species.info.names["es"],
+    //           overflow: TextOverflow.ellipsis,
+    //           style: Theme.of(context).textTheme.subtitle,
+    //         )
+    //       ),
+    //       Container(
+    //         alignment: Alignment(0.95, 0),
+    //         child: Text(
+    //           species.info.id.toString(), 
+    //           style: TextStyle(fontSize: 10),
+    //           overflow: TextOverflow.ellipsis,
+    //         )
+    //       )
+    //     ]
+    //   )
+    // );
+    return Text(
+              species.info.names["es"],
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.subtitle,
+            );
   }
 
   Widget get _loadingPokeball {
@@ -137,21 +172,19 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard> with TickerProv
   Widget get _loading {
     return Center(child: CircularProgressIndicator());
   }
-
   Widget get _futureBuilder {
     return FutureBuilder (
         future: species.getInfo(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError)
-              return Center(child: Icon(Icons.close));
-            else
-              return _data;
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return _loading;
-          } else {
-            return Container();
-          }
+          if (snapshot.hasError) return Center(child: Icon(Icons.close));
+          if (snapshot.connectionState == ConnectionState.waiting) return _loading;
+          if (snapshot.connectionState == ConnectionState.done) 
+            return FadeTransition(
+              // If the widget is visible, animate to 0.0 (invisible).
+              // If the widget is hidden, animate to 1.0 (fully visible).
+              opacity: _controller.drive(CurveTween(curve: Curves.linear)),
+              child: _data
+            );
         }
     );
   }

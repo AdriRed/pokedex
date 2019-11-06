@@ -5,7 +5,7 @@ import 'package:pokedex/providers/Provider.dart';
 import 'package:pokedex/widgets/PokemonListWidget.dart';
 
 class PokedexHomePage extends StatelessWidget {
-  static const String route = "home";
+  static const String route = "/home";
   final PokemonSpeciesListProvider _provider = new PokemonSpeciesListProvider();
   bool first = true;
 
