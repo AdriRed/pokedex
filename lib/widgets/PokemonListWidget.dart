@@ -15,7 +15,7 @@ class PokemonListWidget extends StatelessWidget {
   PokemonListWidget(this.species,this.next);
 
   final _pageController =
-      new PageController(initialPage: 1, viewportFraction: 0.4, keepPage: true);
+      new PageController(viewportFraction: 0.4, keepPage: true);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class PokemonListWidget extends StatelessWidget {
     });
 
     return Container(
-      height: _screenSize.height * 0.80,
+      height: _screenSize.height * 0.875,
       color: Colors.blueGrey,
       child: GridView.count(
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/providers/PokemonSpeciesListProvider.dart';
 import 'package:pokedex/providers/Provider.dart';
+import 'package:pokedex/search/pokeseach.dart';
 import 'package:pokedex/widgets/PokemonListWidget.dart';
 
 class PokedexHomePage extends StatelessWidget {
@@ -17,7 +18,8 @@ class PokedexHomePage extends StatelessWidget {
         children: <Widget>[
           StreamBuilder(
             stream: _provider.speciesStream,
-            builder: (BuildContext context, AsyncSnapshot<List<Provider<PokemonSpecies>>> snapshot) {
+            builder: (BuildContext context,
+                AsyncSnapshot<List<Provider<PokemonSpecies>>> snapshot) {
               if (snapshot.hasData) {
                 return PokemonListWidget(
                   snapshot.data,
@@ -36,6 +38,9 @@ class PokedexHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (first) {
+      // Provider<PokeIndex> provider =
+      //     new Provider("https://pokeapi.co/api/v2/pokemon-species/?limit=807");
+      // provider.getInfo();
       _provider.getMore();
       first = false;
     }
@@ -43,7 +48,7 @@ class PokedexHomePage extends StatelessWidget {
         appBar: AppBar(
             centerTitle: true,
             title: Text("Pokédex"),
-            backgroundColor: Colors.teal),
+            backgroundColor: Colors.red),
         body: Container(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

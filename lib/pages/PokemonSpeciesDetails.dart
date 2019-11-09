@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedex/HelperMethods.dart';
 import 'package:pokedex/models/Pokemon.dart';
 import 'package:pokedex/models/PokemonBaseType.dart';
 import 'package:pokedex/models/PokemonChainLink.dart';
@@ -13,13 +14,24 @@ import 'dart:async';
 import 'package:pokedex/providers/Provider.dart';
 import 'package:pokedex/widgets/PokemonSpeciesCard.dart';
 
-class PokemonSpeciesDetail extends StatelessWidget {
-  int varietyIndex = 0;
+class PokemonSpeciesDetail extends StatefulWidget {
   static const String route = "/detail";
-
   final PokemonSpecies species;
 
   PokemonSpeciesDetail(this.species);
+
+  @override
+  State<StatefulWidget> createState() {
+    return new _PokemonSpeciesDetailState(species);
+  }
+}
+
+class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
+  final PokemonSpecies species;
+
+  int varietyIndex = 0;
+
+  _PokemonSpeciesDetailState(this.species);
 
   // https://stackoverflow.com/questions/23969680/waiting-for-futures-raised-by-other-futures?rq=1
   Future<void> getAllVarieties() async {
@@ -48,7 +60,6 @@ class PokemonSpeciesDetail extends StatelessWidget {
       futures.add(type.type.getInfo());
     }
     // }
-    variety.types.sort((x, y) => x.slot - y.slot);
     return Future.wait(futures);
   }
 
@@ -137,7 +148,7 @@ class PokemonSpeciesDetail extends StatelessWidget {
     return ListView(
       shrinkWrap: true,
       children: [
-        _image,
+        _imageBox,
         _details,
         _stats,
         _evolutions(species.evolutionChain.info.chain)
@@ -145,31 +156,110 @@ class PokemonSpeciesDetail extends StatelessWidget {
     );
   }
 
-  Widget get _image {
+  Widget get _imageBox {
+    List<Widget> children = new List();
+
+    children.add(Align(
+      alignment: Alignment.center,
+      child: _image(varietyIndex),
+    ));
+    if (species.varieties.length > 1) {
+      children.add(Align(
+          alignment: Alignment.topCenter,
+          child: _forms));
+    }
+
     return Container(
         width: 300,
         height: 300,
-        child: Center(
-            child: Card(
-                child: Image(
-                    image: species.varieties[varietyIndex].pokemon.info
-                                .sprites["front_default"] !=
-                            null
-                        ? NetworkImage(species.varieties[varietyIndex].pokemon
-                            .info.sprites["front_default"])
-                        : AssetImage("assets/poke-ball.png"),
-                    filterQuality: FilterQuality.none,
-                    width: 250,
-                    height: 250,
-                    fit: BoxFit.fill))));
+        child: Center(child: Card(child: Stack(children: children))));
   }
 
-  Widget get _stats {
+  Widget get _forms {
+    return PopupMenuButton<int>(
+      itemBuilder: (context) {
+        List<PopupMenuItem<int>> list = List();
+        for (int i = 0; i < species.varieties.length; i++) {
+          list.add(PopupMenuItem(
+            value: i,
+            child: Center(child: _image(i, fit: true)),//Padding( child:, padding: EdgeInsets.only(top: 30),),
+            height: 100,
+          ));
+        }
+        return list;
+      },
+      onSelected: (val) => setState(() => varietyIndex = val),
+      initialValue: varietyIndex,
+      icon: Icon(Icons.list),
+    );
+  }
+
+  Widget _image(int varIndex, {bool fit = true}) {
+    var provider = species.varieties[varIndex].pokemon.info.sprites["front_default"] !=
+                    null
+                ? NetworkImage(species
+                    .varieties[varIndex].pokemon.info.sprites["front_default"])
+                : AssetImage("assets/poke-ball.png");
+    
+    return fit ? 
+        Image(
+          image: provider,
+          filterQuality: FilterQuality.none,
+          width: 250,
+          height: 250,
+          fit: BoxFit.fitHeight
+        ) :
+        Image(
+          image: provider,
+          filterQuality: FilterQuality.none,
+          width: 250,
+          height: 250,
+        );
+  }
+
+  Widget get _stats2 {
     return Column(
         children: species.varieties[varietyIndex].pokemon.info.stats
             .map((stat) => Text(
                 stat.stat.info.names["es"] + " -> " + stat.value.toString()))
             .toList());
+  }
+
+  Widget get _stats {
+    return Card(
+        child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+            child: Column(
+                children: HelperMethods.splitIn(
+                        species.varieties[varietyIndex].pokemon.info.stats, 2)
+                    .map((pairstat) => Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _stat(pairstat.first),
+                              Divider(),
+                              _stat(pairstat.last)
+                            ]))
+                    .toList())));
+  }
+
+  Widget _stat(PokemonStat stat) {
+    return Card(
+      color: Colors.black,
+      child: Row(children: [
+        Card(
+          color: Colors.white,
+          child: Padding(
+              padding: EdgeInsets.all(2),
+              child: _text(stat.stat.info.names["es"], Colors.black, true, 15)),
+        ),
+        Card(
+          color: Colors.white,
+          child: Padding(
+              padding: EdgeInsets.all(2),
+              child: _text(stat.value.toString(), Colors.black, true, 15)),
+        ),
+      ]),
+    );
   }
 
   Widget get _types {
@@ -198,15 +288,14 @@ class PokemonSpeciesDetail extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 250, 250, 250),
       appBar: new AppBar(
-          backgroundColor: Colors.red, 
+          backgroundColor: Colors.red,
           title: new Text(species.names["es"]),
           actions: <Widget>[
             IconButton(
-              icon: Icon(Icons.home),
-              onPressed: () => Navigator.pushNamedAndRemoveUntil(context, PokedexHomePage.route, (_) => false)
-            ),
-          ]
-        ),
+                icon: Icon(Icons.home),
+                onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                    context, PokedexHomePage.route, (_) => false)),
+          ]),
       body: Container(
         child: FutureBuilder(
           future: getAllVarieties(),

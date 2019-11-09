@@ -38,7 +38,7 @@ class Pokemon implements Model {
     json["sprites"].forEach((k, v) {
       if (v != null) sprites.putIfAbsent(k, () => v);
     });
-  
+    types.sort((x, y) => x.slot - y.slot);
   }
 }
 

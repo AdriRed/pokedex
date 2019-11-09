@@ -12,4 +12,13 @@ class HelperMethods {
       return allItems;
     }
   }
+
+  static List<List<dynamic>> splitIn(List<dynamic> list, int chunks) {
+    if (list.isEmpty) return list;
+    List<List<dynamic>> superlist = new List();
+    for (var i = 0; i < list.length; i += chunks) {
+      superlist.add(list.sublist(i, i + chunks));
+    }
+    return superlist;
+  }
 }

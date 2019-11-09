@@ -37,6 +37,8 @@ class PokemonSpecies implements Model {
       varieties.add(new PokemonVariety.fromJSON(variety));
 
     evolutionChain = new Provider(json["evolution_chain"]["url"]);
+
+    varieties.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
   }
 
   PokemonVariety get defaultVariety {

@@ -47,7 +47,7 @@ class Provider<T extends Model> {
       //log("GET JSON: " + uri.toString());
       var request = await http.getUrl(uri);
       var response = await request.close();
-      if (response.statusCode == 404) {
+      if (response.statusCode != 200) {
         _locker.unlock();
         return await getInfo();
       }

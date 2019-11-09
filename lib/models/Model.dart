@@ -6,6 +6,7 @@ import 'package:pokedex/models/PokemonEvolutionChain.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/models/PokemonBaseStat.dart';
 import 'package:pokedex/models/PokemonBaseType.dart';
+import 'package:pokedex/search/pokeseach.dart';
 
 abstract class Model {
   factory Model.fromJSON(Type type, Map<String, dynamic> json) {
@@ -30,6 +31,8 @@ abstract class Model {
         break;
       case PokemonBaseType:
         return new PokemonBaseType.fromJSON(json);
+      case PokeIndex:
+        return new PokeIndex.fromJSON(json);
         break;
     }
 
