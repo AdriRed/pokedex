@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/Model.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
+import 'package:pokedex/providers/PokemonSpeciesProvider.dart';
+import 'package:pokedex/providers/PokemonSpeciesProvider.dart';
 import 'package:pokedex/providers/Provider.dart';
+import 'package:pokedex/widgets/PokemonSpeciesCard.dart';
 
 class PokeSearch extends SearchDelegate {
+  PokemonSpeciesProvider provider;
+
+  PokeSearch(PokemonSpeciesProvider provider) {
+    this.provider = provider;
+  }
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -33,21 +42,38 @@ class PokeSearch extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     // TODO: implement buildResults
-    return null;
+    return Container(width: 40, height: 40);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // TODO: implement buildSuggestions
-    return null;
+    if (query.isEmpty) return Container(width: 40, height: 40);
+
+    return FutureBuilder(
+      future: provider.find(query),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data is List<PokeEntry>) {
+            return ListView(
+              children: snapshot.data.map((item) {
+                return PokemonSpeciesCard(item.species);
+              }).toList(),
+            );
+          } else {
+            return PokemonSpeciesCard(snapshot.data);
+          }
+        }
+      },
+    );
   }
 }
 
 class PokeEntry {
   Provider<PokemonSpecies> species;
   String name;
+  int id;
 
-  PokeEntry.fromJSON(Map<String, dynamic> json) {
+  PokeEntry.fromJSON(Map<String, dynamic> json, int id) {
     name = json["name"];
     species = new Provider(json["url"]);
   }
@@ -57,8 +83,8 @@ class PokeIndex implements Model {
   List<PokeEntry> entries = new List();
 
   PokeIndex.fromJSON(Map<String, dynamic> json) {
-    for (var result in json["results"]) {
-      entries.add(new PokeEntry.fromJSON(result));
+    for (var i = 0; i < json["results"].length; i++) {
+      entries.add(new PokeEntry.fromJSON(json["results"][i], i + 1));
     }
   }
 }

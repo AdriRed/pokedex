@@ -7,18 +7,24 @@ import 'dart:convert';
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/models/PokemonSpeciesList.dart';
 import 'package:pokedex/providers/Provider.dart';
+import 'package:pokedex/search/PokeSearch.dart';
 
-class PokemonSpeciesListProvider {
+class PokemonSpeciesProvider {
   String next;
   int _page = 0;
   int _total = 0;
+  int _count;
   final int _limit = 16;
   bool loading = false;
+  Provider<PokeIndex> index;
 
-  final _streamController = StreamController<List<Provider<PokemonSpecies>>>.broadcast();
+  final _streamController =
+      StreamController<List<Provider<PokemonSpecies>>>.broadcast();
 
-  Function(List<Provider<PokemonSpecies>>) get speciesSink => _streamController.sink.add;
-  Stream<List<Provider<PokemonSpecies>>> get speciesStream => _streamController.stream;
+  Function(List<Provider<PokemonSpecies>>) get speciesSink =>
+      _streamController.sink.add;
+  Stream<List<Provider<PokemonSpecies>>> get speciesStream =>
+      _streamController.stream;
 
   List<Provider<PokemonSpecies>> _species = new List();
 
@@ -32,19 +38,17 @@ class PokemonSpeciesListProvider {
     loading = true;
     _page++;
 
-    final url = Uri.https("pokeapi.co", "api/v2/pokemon-species", 
-      {
-        "limit": _limit.toString(), 
-        "offset" : _total.toString()
-      });
-      
+    final url = Uri.https("pokeapi.co", "api/v2/pokemon-species",
+        {"limit": _limit.toString(), "offset": _total.toString()});
+
     var json = await _procesarRespuesta(url);
 
+    if (_count == null) _count = json["count"];
 
     PokemonSpeciesList list = new PokemonSpeciesList.fromJSON(json, "results");
-    
+
     _total += list.species.length;
-    
+
     final resp = list.species;
     _species.addAll(resp);
     speciesSink(_species);
@@ -61,7 +65,6 @@ class PokemonSpeciesListProvider {
   }
 
   Future<Map<String, dynamic>> _procesarRespuesta(Uri url) async {
-    
     HttpClient http = new HttpClient();
     final resp = await http.getUrl(url);
     final respbody = await resp.close();
@@ -71,4 +74,29 @@ class PokemonSpeciesListProvider {
     return decodedData;
   }
 
+  List<PokeEntry> _findByName(String name) {
+    return index.info.entries.where((entry) => entry.name.contains(name)).toList();
+  }
+
+  Future<dynamic> find(String query) async {
+    if (index == null) initIndex().then((x) => find(query));
+
+    query = query.trim().toLowerCase();
+    int n = int.tryParse(query);
+    return n == null ? _findByName(query) : _findById(n);
+  }
+
+  PokeEntry _findById(int id) {
+    return index.info.entries.singleWhere((x) => x.id == id, orElse: () => null);
+  }
+
+  Future<PokeIndex> initIndex() async {
+    if (_count == null) {
+      await getMore();
+    }
+
+    index = new Provider(
+        "https://pokeapi.co/api/v2/pokemon-species?limit=" + _count.toString());
+    return index.getInfo();
+  }
 }

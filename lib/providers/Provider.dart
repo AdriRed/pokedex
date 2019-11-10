@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:pokedex/models/Model.dart';
 import 'package:pokedex/providers/Locker.dart';
+import 'package:pokedex/search/PokeSearch.dart';
 
 class Provider<T extends Model> {
   String url;
@@ -16,11 +17,10 @@ class Provider<T extends Model> {
   }
 
   Future<T> getInfo() async {
-    
     _recall() {
       return getInfo();
     }
-    
+
     if (_locker.locked) return await _locker.waitLock();
     _locker.setFunction(_recall);
     _locker.lock();
@@ -39,7 +39,7 @@ class Provider<T extends Model> {
     }
 
     HttpClient http = new HttpClient();
-
+    log(url);
     String route = url.split("pokeapi.co/")[1];
     log(route);
     try {
@@ -52,6 +52,7 @@ class Provider<T extends Model> {
         return await getInfo();
       }
       var responseBody = await response.transform(utf8.decoder).join();
+
       //log(responseBody);
       var decoded = json.decode(responseBody);
 

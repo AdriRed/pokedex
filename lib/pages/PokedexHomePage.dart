@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
-import 'package:pokedex/providers/PokemonSpeciesListProvider.dart';
+import 'package:pokedex/providers/PokemonSpeciesProvider.dart';
 import 'package:pokedex/providers/Provider.dart';
-import 'package:pokedex/search/pokeseach.dart';
+import 'package:pokedex/search/PokeSearch.dart';
 import 'package:pokedex/widgets/PokemonListWidget.dart';
 
 class PokedexHomePage extends StatelessWidget {
   static const String route = "/home";
-  final PokemonSpeciesListProvider _provider = new PokemonSpeciesListProvider();
+  final PokemonSpeciesProvider _provider = new PokemonSpeciesProvider();
   bool first = true;
 
   Widget _footer(BuildContext context) {
@@ -46,13 +46,29 @@ class PokedexHomePage extends StatelessWidget {
     }
     return Scaffold(
         appBar: AppBar(
-            centerTitle: true,
-            title: Text("Pokédex"),
-            backgroundColor: Colors.red),
+          centerTitle: true,
+          title: Text("Pokédex"),
+          backgroundColor: Colors.red,
+          actions: <Widget>[
+            IconButton(
+            icon: Icon( Icons.search ),
+            onPressed: () {
+              showSearch(
+                context: context, 
+                delegate: PokeSearch(_provider),
+                // query: 'Hola'
+                );
+            },
+          )
+          ],
+        ),
+
         body: Container(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[_footer(context)],
-        )));
+        )),
+        
+        );
   }
 }
