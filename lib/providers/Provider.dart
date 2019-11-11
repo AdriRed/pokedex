@@ -7,6 +7,7 @@ import 'package:pokedex/providers/Locker.dart';
 import 'package:pokedex/search/PokeSearch.dart';
 
 class Provider<T extends Model> {
+  static const String domain = "pokeapi.co"; 
   String url;
   T info;
   Locker _locker = LockManager.getLocker();
@@ -30,23 +31,22 @@ class Provider<T extends Model> {
       return info;
     }
 
-    {
-      if (repo.exists(url)) {
-        info = await repo.pop(url) as T;
-        _locker.unlock();
-        return info;
-      }
+    if (repo.exists(url)) {
+      info = await repo.pop(url) as T;
+      _locker.unlock();
+      return info;
     }
 
     HttpClient http = new HttpClient();
-    log(url);
-    String route = url.split("pokeapi.co/")[1];
-    log(route);
+    //log(url);
+    String route = url.split(domain+"/")[1];
+    //log(route);
     try {
-      var uri = new Uri.https("pokeapi.co", route);
+      var uri = new Uri.https(domain, route);
       //log("GET JSON: " + uri.toString());
       var request = await http.getUrl(uri);
       var response = await request.close();
+      //log(response.statusCode.toString() + " " + route);
       if (response.statusCode != 200) {
         _locker.unlock();
         return await getInfo();

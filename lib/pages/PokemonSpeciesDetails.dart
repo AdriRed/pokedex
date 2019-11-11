@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/HelperMethods.dart';
+import 'package:pokedex/User.dart';
 import 'package:pokedex/models/Pokemon.dart';
 import 'package:pokedex/models/PokemonBaseType.dart';
 import 'package:pokedex/models/PokemonChainLink.dart';
@@ -28,15 +29,15 @@ class PokemonSpeciesDetail extends StatefulWidget {
 
 class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
   final PokemonSpecies species;
-
+  
+  var _size;
   int varietyIndex = 0;
 
   _PokemonSpeciesDetailState(this.species);
 
   // https://stackoverflow.com/questions/23969680/waiting-for-futures-raised-by-other-futures?rq=1
-  Future<void> getAllVarieties() async {
+  static Future<void> getAllVarieties(PokemonSpecies species) async {
     List<Future<dynamic>> varietiesFutures = [];
-    //log("Varieties from: " + species.names["es"]);
     species.varieties.forEach((variety) {
       varietiesFutures.add(variety.pokemon.getInfo().then((pokemon) {
         List<Future<dynamic>> futures = [];
@@ -53,7 +54,7 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
     return Future.wait<dynamic>(varietiesFutures);
   }
 
-  Future<void> futureAllTypes(Pokemon variety) async {
+  static Future<void> futureAllTypes(Pokemon variety) async {
     // for (var variety in species.varieties) {
     List<Future<dynamic>> futures = [];
     for (var type in variety.types) {
@@ -63,7 +64,7 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
     return Future.wait(futures);
   }
 
-  Future<void> futureAllAbilities(Pokemon variety) async {
+  static Future<void> futureAllAbilities(Pokemon variety) async {
     List<Future<dynamic>> futures = [];
     for (var abilitiyProv in variety.abilities) {
       futures.add(abilitiyProv.ability.getInfo());
@@ -71,14 +72,13 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
     return Future.wait(futures);
   }
 
-  Future<void> futureEvolution(PokemonSpecies species) async {
-    //log("Evolutions from species: " + species.names["es"]);
+  static Future<void> futureEvolution(PokemonSpecies species) async {
     return species.evolutionChain
         .getInfo()
         .then((x) => Future.wait(x.chain.getAllInfo()));
   }
 
-  Future<void> futureStats(Pokemon variety) async {
+  static Future<void> futureStats(Pokemon variety) async {
     List<Future<dynamic>> futures = [];
     for (var statProv in variety.stats) {
       futures.add(statProv.stat.getInfo());
@@ -123,7 +123,7 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
   }
 
   Widget get _description {
-    return _text(species.descriptionEntries["es"], Colors.black, false, 15);
+    return _text(species.descriptionEntries[User.language] ?? species.descriptionEntries[User.extraLang], Colors.black, false, 15);
   }
 
   Widget _text(String text, Color color, bool bold, double size) {
@@ -136,12 +136,12 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
   }
 
   Widget get _name {
-    return _text("Nº" + species.id.toString() + " - " + species.names["es"],
+    return _text("Nº" + species.id.toString() + " - " + species.names[User.language] ?? species.names[User.extraLang],
         Colors.black, true, 20);
   }
 
   Widget get _genera {
-    return _text(species.genera["es"], Colors.black, false, 16);
+    return _text(species.genera[User.language] ?? species.genera[User.extraLang], Colors.black, false, 16);
   }
 
   Widget _data(PokemonSpecies species) {
@@ -170,8 +170,8 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
     }
 
     return Container(
-        width: 300,
-        height: 300,
+        width: _size.width * 0.775,
+        height: _size.height * 0.469,
         child: Center(child: Card(child: Stack(children: children))));
   }
 
@@ -183,7 +183,7 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
           list.add(PopupMenuItem(
             value: i,
             child: Center(child: _image(i, fit: true)),//Padding( child:, padding: EdgeInsets.only(top: 30),),
-            height: 100,
+            height: _size.height * 0.15625,
           ));
         }
         return list;
@@ -205,24 +205,16 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
         Image(
           image: provider,
           filterQuality: FilterQuality.none,
-          width: 250,
-          height: 250,
+          width: _size.width * 0.652,
+          height: _size.width * 0.652,
           fit: BoxFit.fitHeight
         ) :
         Image(
           image: provider,
           filterQuality: FilterQuality.none,
-          width: 250,
-          height: 250,
+          width: _size.width * 0.652,
+          height: _size.width * 0.652,
         );
-  }
-
-  Widget get _stats2 {
-    return Column(
-        children: species.varieties[varietyIndex].pokemon.info.stats
-            .map((stat) => Text(
-                stat.stat.info.names["es"] + " -> " + stat.value.toString()))
-            .toList());
   }
 
   Widget get _stats {
@@ -250,7 +242,7 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
           color: Colors.white,
           child: Padding(
               padding: EdgeInsets.all(2),
-              child: _text(stat.stat.info.names["es"], Colors.black, true, 15)),
+              child: _text(stat.stat.info.names[User.language] ?? stat.stat.info.names[User.extraLang], Colors.black, true, 15)),
         ),
         Card(
           color: Colors.white,
@@ -270,7 +262,7 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
                 child: new Padding(
                     padding: EdgeInsets.all(8),
                     child: new Text(
-                      type.type.info.names["es"].toUpperCase(),
+                      (type.type.info.names[User.language] ?? type.type.info.names[User.extraLang]).toUpperCase(),
                       style: new TextStyle(color: Colors.white, fontSize: 15),
                     ))))
             .toList());
@@ -282,14 +274,14 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
       children: <Widget>[_genera, _types],
     );
   }
-
   @override
   Widget build(BuildContext context) {
+    _size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 250, 250, 250),
       appBar: new AppBar(
           backgroundColor: Colors.red,
-          title: new Text(species.names["es"]),
+          title: new Text(species.names[User.language] ?? species.names[User.extraLang]),
           actions: <Widget>[
             IconButton(
                 icon: Icon(Icons.home),
@@ -298,7 +290,7 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
           ]),
       body: Container(
         child: FutureBuilder(
-          future: getAllVarieties(),
+          future: getAllVarieties(species),
           builder: (builder, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasError) return Icon(Icons.close);

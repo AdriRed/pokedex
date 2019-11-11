@@ -27,7 +27,7 @@ class PokemonListWidget extends StatelessWidget {
         next();
       }
     });
-
+    log(_screenSize.width.toString() + " " + _screenSize.height.toString());
     return Container(
       height: _screenSize.height * 0.875,
       color: Colors.blueGrey,
@@ -35,7 +35,7 @@ class PokemonListWidget extends StatelessWidget {
 
         controller: _pageController,
         crossAxisCount: 4,
-        childAspectRatio: (cardWidth / cardHeight),
+        childAspectRatio: (_screenSize.width/ _screenSize.height),
         //shrinkWrap: true,
         // children: _tarjetas(context),
         children: List.generate(species.length, (index) => new PokemonSpeciesCard(species[index], cardWidth, cardHeight))

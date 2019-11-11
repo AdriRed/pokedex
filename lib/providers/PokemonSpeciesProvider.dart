@@ -16,7 +16,7 @@ class PokemonSpeciesProvider {
   int _count;
   final int _limit = 16;
   bool loading = false;
-  Provider<PokeIndex> index;
+  PokeIndex index;
 
   final _streamController =
       StreamController<List<Provider<PokemonSpecies>>>.broadcast();
@@ -68,6 +68,7 @@ class PokemonSpeciesProvider {
     HttpClient http = new HttpClient();
     final resp = await http.getUrl(url);
     final respbody = await resp.close();
+    log(respbody.statusCode.toString());
     final converted = await respbody.transform(utf8.decoder).join();
     //log(converted);
     final decodedData = json.decode(converted);
@@ -75,28 +76,27 @@ class PokemonSpeciesProvider {
   }
 
   List<PokeEntry> _findByName(String name) {
-    return index.info.entries.where((entry) => entry.name.contains(name)).toList();
+    return index.entries.where((entry) => entry.name.contains(name)).toList();
   }
 
   Future<dynamic> find(String query) async {
     if (index == null) initIndex().then((x) => find(query));
-
+    log("QUERY: " + query);
     query = query.trim().toLowerCase();
     int n = int.tryParse(query);
     return n == null ? _findByName(query) : _findById(n);
   }
 
   PokeEntry _findById(int id) {
-    return index.info.entries.singleWhere((x) => x.id == id, orElse: () => null);
+    return index.entries.singleWhere((x) => x.id == id, orElse: () => null);
   }
 
   Future<PokeIndex> initIndex() async {
     if (_count == null) {
       await getMore();
     }
-
-    index = new Provider(
-        "https://pokeapi.co/api/v2/pokemon-species?limit=" + _count.toString());
-    return index.getInfo();
+    var json = await _procesarRespuesta(Uri.tryParse("https://pokeapi.co/api/v2/pokemon-species?limit=807"));
+    index = PokeIndex.fromJSON(json);
+    return index;
   }
 }

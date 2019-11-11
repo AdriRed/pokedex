@@ -11,6 +11,7 @@ class PokeSearch extends SearchDelegate {
 
   PokeSearch(PokemonSpeciesProvider provider) {
     this.provider = provider;
+    provider.initIndex();
   }
 
   @override
@@ -41,8 +42,7 @@ class PokeSearch extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
-    return Container(width: 40, height: 40);
+    return buildSuggestions(context);
   }
 
   @override
@@ -52,17 +52,18 @@ class PokeSearch extends SearchDelegate {
     return FutureBuilder(
       future: provider.find(query),
       builder: (context, snapshot) {
+        final size = MediaQuery.of(context).size;
+        if (snapshot.connectionState == ConnectionState.waiting) return Center(child:CircularProgressIndicator());
         if (snapshot.hasData) {
           if (snapshot.data is List<PokeEntry>) {
             return ListView(
-              children: snapshot.data.map((item) {
-                return PokemonSpeciesCard(item.species);
-              }).toList(),
+              children: <Widget>[...snapshot.data.map((item) => PokemonSpeciesCard(item.species, 1, size.height*0.25, true))],
             );
           } else {
-            return PokemonSpeciesCard(snapshot.data);
+            return Center(child:PokemonSpeciesCard(snapshot.data.species, size.width*0.9, size.height*0.25, true));
           }
         }
+        return Container();
       },
     );
   }
@@ -76,6 +77,7 @@ class PokeEntry {
   PokeEntry.fromJSON(Map<String, dynamic> json, int id) {
     name = json["name"];
     species = new Provider(json["url"]);
+    this.id = id;
   }
 }
 
