@@ -29,7 +29,7 @@ class PokemonSpeciesDetail extends StatefulWidget {
 
 class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
   final PokemonSpecies species;
-  
+
   var _size;
   int varietyIndex = 0;
 
@@ -103,7 +103,7 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
         //     )),
         //Divider(color: Colors.black),
         ...List.generate(allevos.length,
-            (index) => PokemonSpeciesCard(allevos[index], 1, 155))
+            (index) => PokemonSpeciesCard(allevos[index], 1, _size.width*0.5))
       ],
     ));
   }
@@ -123,7 +123,12 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
   }
 
   Widget get _description {
-    return _text(species.descriptionEntries[User.language] ?? species.descriptionEntries[User.extraLang], Colors.black, false, 15);
+    return _text(
+        species.descriptionEntries[User.language] ??
+            species.descriptionEntries[User.extraLang],
+        Colors.black,
+        false,
+        15);
   }
 
   Widget _text(String text, Color color, bool bold, double size) {
@@ -136,12 +141,20 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
   }
 
   Widget get _name {
-    return _text("Nº" + species.id.toString() + " - " + species.names[User.language] ?? species.names[User.extraLang],
-        Colors.black, true, 20);
+    return _text(
+        "Nº" + species.id.toString() + " - " + species.names[User.language] ??
+            species.names[User.extraLang],
+        Colors.black,
+        true,
+        20);
   }
 
   Widget get _genera {
-    return _text(species.genera[User.language] ?? species.genera[User.extraLang], Colors.black, false, 16);
+    return _text(
+        species.genera[User.language] ?? species.genera[User.extraLang],
+        Colors.black,
+        false,
+        16);
   }
 
   Widget _data(PokemonSpecies species) {
@@ -164,9 +177,7 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
       child: _image(varietyIndex),
     ));
     if (species.varieties.length > 1) {
-      children.add(Align(
-          alignment: Alignment.topCenter,
-          child: _forms));
+      children.add(Align(alignment: Alignment.topCenter, child: _forms));
     }
 
     return Container(
@@ -182,7 +193,10 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
         for (int i = 0; i < species.varieties.length; i++) {
           list.add(PopupMenuItem(
             value: i,
-            child: Center(child: _image(i, fit: true)),//Padding( child:, padding: EdgeInsets.only(top: 30),),
+            child: Center(
+                child: _image(i,
+                    fit:
+                        true)), //Padding( child:, padding: EdgeInsets.only(top: 30),),
             height: _size.height * 0.15625,
           ));
         }
@@ -195,26 +209,26 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
   }
 
   Widget _image(int varIndex, {bool fit = true}) {
-    var provider = species.varieties[varIndex].pokemon.info.sprites["front_default"] !=
-                    null
-                ? NetworkImage(species
-                    .varieties[varIndex].pokemon.info.sprites["front_default"])
-                : AssetImage("assets/poke-ball.png");
-    
-    return fit ? 
-        Image(
-          image: provider,
-          filterQuality: FilterQuality.none,
-          width: _size.width * 0.652,
-          height: _size.width * 0.652,
-          fit: BoxFit.fitHeight
-        ) :
-        Image(
-          image: provider,
-          filterQuality: FilterQuality.none,
-          width: _size.width * 0.652,
-          height: _size.width * 0.652,
-        );
+    var provider = species
+                .varieties[varIndex].pokemon.info.sprites["front_default"] !=
+            null
+        ? NetworkImage(
+            species.varieties[varIndex].pokemon.info.sprites["front_default"])
+        : AssetImage("assets/poke-ball.png");
+
+    return fit
+        ? Image(
+            image: provider,
+            filterQuality: FilterQuality.none,
+            width: _size.width * 0.652,
+            height: _size.width * 0.652,
+            fit: BoxFit.fitHeight)
+        : Image(
+            image: provider,
+            filterQuality: FilterQuality.none,
+            width: _size.width * 0.652,
+            height: _size.width * 0.652,
+          );
   }
 
   Widget get _stats {
@@ -242,7 +256,12 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
           color: Colors.white,
           child: Padding(
               padding: EdgeInsets.all(2),
-              child: _text(stat.stat.info.names[User.language] ?? stat.stat.info.names[User.extraLang], Colors.black, true, 15)),
+              child: _text(
+                  stat.stat.info.names[User.language] ??
+                      stat.stat.info.names[User.extraLang],
+                  Colors.black,
+                  true,
+                  15)),
         ),
         Card(
           color: Colors.white,
@@ -262,7 +281,9 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
                 child: new Padding(
                     padding: EdgeInsets.all(8),
                     child: new Text(
-                      (type.type.info.names[User.language] ?? type.type.info.names[User.extraLang]).toUpperCase(),
+                      (type.type.info.names[User.language] ??
+                              type.type.info.names[User.extraLang])
+                          .toUpperCase(),
                       style: new TextStyle(color: Colors.white, fontSize: 15),
                     ))))
             .toList());
@@ -274,6 +295,7 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
       children: <Widget>[_genera, _types],
     );
   }
+
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.of(context).size;
@@ -281,7 +303,8 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
       backgroundColor: Color.fromARGB(255, 250, 250, 250),
       appBar: new AppBar(
           backgroundColor: Colors.red,
-          title: new Text(species.names[User.language] ?? species.names[User.extraLang]),
+          title: new Text(
+              species.names[User.language] ?? species.names[User.extraLang]),
           actions: <Widget>[
             IconButton(
                 icon: Icon(Icons.home),
