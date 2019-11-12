@@ -4,9 +4,6 @@ import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/pages/PokedexHomePage.dart';
 import 'package:pokedex/pages/PokemonSpeciesDetails.dart';
 
-import 'src/pages/home_page.dart';
-import 'src/pages/pelicula_detalle.dart';
-
 void main() => runApp(Pokedex());
 
 class Pokedex extends StatelessWidget {

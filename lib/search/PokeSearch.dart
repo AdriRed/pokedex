@@ -8,10 +8,11 @@ import 'package:pokedex/widgets/PokemonSpeciesCard.dart';
 
 class PokeSearch extends SearchDelegate {
   PokemonSpeciesProvider provider;
-
-  PokeSearch(PokemonSpeciesProvider provider) {
+  Size _size;
+  PokeSearch(PokemonSpeciesProvider provider, Size size) {
     this.provider = provider;
     provider.initIndex();
+    _size = size;
   }
 
   @override
@@ -44,7 +45,7 @@ class PokeSearch extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     return buildSuggestions(context);
   }
-
+  
   @override
   Widget buildSuggestions(BuildContext context) {
     if (query.isEmpty) return Container(width: 40, height: 40);
@@ -52,15 +53,14 @@ class PokeSearch extends SearchDelegate {
     return FutureBuilder(
       future: provider.find(query),
       builder: (context, snapshot) {
-        final size = MediaQuery.of(context).size;
         if (snapshot.connectionState == ConnectionState.waiting) return Center(child:CircularProgressIndicator());
         if (snapshot.hasData) {
           if (snapshot.data is List<PokeEntry>) {
             return ListView(
-              children: <Widget>[...snapshot.data.map((item) => PokemonSpeciesCard(item.species, 1, size.height*0.25, true))],
+              children: <Widget>[...snapshot.data.map((item) => PokemonSpeciesCard(item.species, 1, _size.width*0.8*0.59, true))],
             );
           } else {
-            return Center(child:PokemonSpeciesCard(snapshot.data.species, size.width*0.9, size.height*0.25, true));
+            return Center(child:PokemonSpeciesCard(snapshot.data.species, _size.width*0.8, _size.width*0.8*0.3, true));
           }
         }
         return Container();

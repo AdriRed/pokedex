@@ -88,7 +88,7 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
                         ),
                         _name
                       ]),
-                      _types
+                      //_types
                     ]))));
   }
 
@@ -100,21 +100,12 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
           if (snapshot.connectionState == ConnectionState.done &&
               !snapshot.hasError) {
             log(species.info.defaultVariety.pokemon.info.types[0].type.info
-                .names["es"]);
-            return Row(
-              children: species.info.defaultVariety.pokemon.info.types
-                  .map((x) => Expanded(
-                        child: Container(
-                          color: PokemonBaseType.colors[x.type.info.id],
-                        ),
-                      ))
-                  .toList(),
-            );
-            return Expanded(
-              child: Container(
-                color: Colors.black,
-              ),
-            );
+                .id.toString());
+            return FadeTransition(
+                // If the widget is visible, animate to 0.0 (invisible).
+                // If the widget is hidden, animate to 1.0 (fully visible).
+                opacity: _controller.drive(CurveTween(curve: Curves.linear)),
+                child: Container(height: 3, color: Colors.black));
           }
           return Container();
         });

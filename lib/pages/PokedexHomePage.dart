@@ -55,7 +55,7 @@ class PokedexHomePage extends StatelessWidget {
             onPressed: () {
               showSearch(
                 context: context, 
-                delegate: PokeSearch(_provider),
+                delegate: PokeSearch(_provider, MediaQuery.of(context).size),
                 // query: 'Hola'
                 );
             },
