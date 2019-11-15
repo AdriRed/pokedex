@@ -16,7 +16,8 @@ class PokemonSpeciesCard extends StatefulWidget {
   final double width, height;
   final bool appearLoading;
 
-  PokemonSpeciesCard(this.speciesProv, [this.width = 40, this.height = 40, this.appearLoading = false]);
+  PokemonSpeciesCard(this.speciesProv,
+      [this.width = 40, this.height = 40, this.appearLoading = false]);
 
   @override
   State<StatefulWidget> createState() {
@@ -31,7 +32,8 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
   final bool appearLoading;
   var _size;
 
-  _PokemonSpeciesCardState(this.species, this.width, this.height, this.appearLoading);
+  _PokemonSpeciesCardState(
+      this.species, this.width, this.height, this.appearLoading);
 
   AnimationController _controller;
   Animation<double> _animation;
@@ -58,7 +60,9 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
   }
 
   Future<void> getVarieties(PokemonSpecies species) async {
-    return species.defaultVariety.pokemon.getInfo().then((variety) => PokemonLoader.futureAllTypes(variety));
+    return species.defaultVariety.pokemon
+        .getInfo()
+        .then((variety) => PokemonLoader.futureAllTypes(variety));
   }
 
   Widget get _data {
@@ -70,31 +74,41 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
               Navigator.pushNamed(context, PokemonSpeciesDetail.route,
                   arguments: species.info);
             },
-            child: Column (
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Padding(
+            child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-                child: Column(children: <Widget>[
-                  _image,
-                  Divider(
-                    color: Colors.black,
-                    indent: 3,
-                    endIndent: 3,
-                  ),
-                  _name,
-                ])),
-                _types
-              ],
-            )
-            ));
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Column(children: <Widget>[
+                        _image,
+                        Divider(
+                          color: Colors.black,
+                          indent: 3,
+                          endIndent: 3,
+                        ),
+                        _name
+                      ]),
+                      //_types
+                    ]))));
   }
 
   Widget get _types {
-    // return Row(
-    //   children: species.info.defaultVariety.pokemon.info.types.map((x) => Expanded(child: Container(color: PokemonBaseType.colors[x.type.info.id],),)).toList(),
-    // );
-    return Container();
+    return FutureBuilder(
+        future: PokemonLoader.futureAllTypes(
+            species.info.defaultVariety.pokemon.info),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              !snapshot.hasError) {
+            log(species.info.defaultVariety.pokemon.info.types[0].type.info
+                .id.toString());
+            return FadeTransition(
+                // If the widget is visible, animate to 0.0 (invisible).
+                // If the widget is hidden, animate to 1.0 (fully visible).
+                opacity: _controller.drive(CurveTween(curve: Curves.linear)),
+                child: Container(height: 3, color: Colors.black));
+          }
+          return Container();
+        });
   }
 
   Widget get _image {
@@ -105,7 +119,6 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
           child: new FutureBuilder<void>(
               future: getVarieties(species.info),
               builder: (context, snapshot) {
-
                 if (snapshot.connectionState == ConnectionState.done) {
                   return Center(
                       child: FadeInImage(
@@ -113,7 +126,7 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
                             .sprites["front_default"] ??
                         ""),
                     placeholder: AssetImage('assets/poke-ball.png'),
-                    height: _size.height*0.15625,
+                    height: _size.height * 0.15625,
                     fadeOutDuration: Duration(milliseconds: 300),
                   )
                       // child: CachedNetworkImage(
@@ -130,7 +143,7 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
                       child: Image(
                     image: AssetImage("assets/poke-ball.png"),
                     fit: BoxFit.scaleDown,
-                    height: _size.height*0.15625,
+                    height: _size.height * 0.15625,
                     filterQuality: FilterQuality.none,
                   ));
                 }
@@ -151,8 +164,8 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
         child: RotationTransition(
             turns: _animation,
             child: Container(
-              height: _size * 0.125,
-              width: _size * 0.125,
+              height: _size.height * 0.125,
+              width: _size.width * 0.125,
               child: Image(
                 image: AssetImage("assets/pokeball-hd.png"),
                 fit: BoxFit.scaleDown,
@@ -169,7 +182,8 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
         future: species.getInfo(),
         builder: (context, snapshot) {
           if (snapshot.hasError) return Center(child: Icon(Icons.close));
-          if (snapshot.connectionState == ConnectionState.waiting && appearLoading) return _loading;
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              appearLoading) return _loading;
           if (snapshot.connectionState == ConnectionState.done)
             return FadeTransition(
                 // If the widget is visible, animate to 0.0 (invisible).
