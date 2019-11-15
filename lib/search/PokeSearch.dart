@@ -57,10 +57,10 @@ class PokeSearch extends SearchDelegate {
         if (snapshot.hasData) {
           if (snapshot.data is List<PokeEntry>) {
             return ListView(
-              children: <Widget>[...snapshot.data.map((item) => PokemonSpeciesCard(item.species, 1, size.height*0.25, true))],
+              children: <Widget>[...snapshot.data.map((item) => PokemonSpeciesCard(item.species, 1, size.height*0.225, true))],
             );
           } else {
-            return Center(child:PokemonSpeciesCard(snapshot.data.species, size.width*0.9, size.height*0.25, true));
+            return Center(child:PokemonSpeciesCard(snapshot.data.species, size.width*0.9, size.height*0.225, true));
           }
         }
         return Container();

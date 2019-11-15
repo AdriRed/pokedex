@@ -65,10 +65,12 @@ class PokedexHomePage extends StatelessWidget {
 
         body: Container(
             child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[_footer(context)],
-        )),
-        
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[_footer(context)],
+          )),
+        drawer: new Drawer(
+          
+        ),
         );
   }
 }
