@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/models/Model.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/providers/PokemonSpeciesProvider.dart';
-import 'package:pokedex/providers/PokemonSpeciesProvider.dart';
 import 'package:pokedex/providers/Provider.dart';
 import 'package:pokedex/widgets/PokemonSpeciesCard.dart';
 

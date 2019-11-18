@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:pokedex/models/Pokemon.dart';
 import 'package:pokedex/models/PokemonBaseAbility.dart';
 import 'package:pokedex/models/PokemonEvolutionChain.dart';
+import 'package:pokedex/models/PokemonGeneration.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/models/PokemonBaseStat.dart';
 import 'package:pokedex/models/PokemonBaseType.dart';
@@ -33,6 +34,9 @@ abstract class Model {
         return new PokemonBaseType.fromJSON(json);
       case PokeIndex:
         return new PokeIndex.fromJSON(json);
+        break;
+      case PokemonGeneration:
+        return new PokemonGeneration.fromJSON(json);
         break;
     }
 
