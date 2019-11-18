@@ -8,8 +8,10 @@ import 'dart:async';
 
 class PokemonSpeciesList implements Model  {
   List<Provider<PokemonSpecies>> species;
+  int count;
 
-  PokemonSpeciesList.fromJSON(Map<String, dynamic> json, String field) {
+  PokemonSpeciesList.fromJSON(Map<String, dynamic> json, {String field = "results"}) {
+    count = json["count"];
     species = new List();
     for (var pokemonSpecie in json[field]) {
       species.add(new Provider(pokemonSpecie["url"]));

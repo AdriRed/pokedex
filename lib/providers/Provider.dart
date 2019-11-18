@@ -8,7 +8,7 @@ import 'package:pokedex/search/PokeSearch.dart';
 
 class Provider<T extends Model> {
   static const String domain = "pokeapi.co"; 
-  String url;
+  Uri url;
   T info;
   Locker _locker = LockManager.getLocker();
   static Repository repo = new Repository();
@@ -31,46 +31,45 @@ class Provider<T extends Model> {
       return info;
     }
 
-    if (repo.exists(url)) {
-      info = await repo.pop(url) as T;
+    if (repo.exists(url.toString())) {
+      info = await repo.pop(url.toString()) as T;
       _locker.unlock();
       return info;
     }
+    
 
-    HttpClient http = new HttpClient();
-    //log(url);
-    String route = url.split(domain+"/")[1];
-    //log(route);
     try {
-      var uri = new Uri.https(domain, route);
-      //log("GET JSON: " + uri.toString());
-      var request = await http.getUrl(uri);
-      var response = await request.close();
-      //log(response.statusCode.toString() + " " + route);
-      if (response.statusCode != 200) {
+      HttpClient http = new HttpClient();
+      final resp = await http.getUrl(url);
+      final respbody = await resp.close();
+      
+      log(respbody.statusCode.toString());
+
+      if (respbody.statusCode != 200) {
         _locker.unlock();
         return await getInfo();
       }
-      var responseBody = await response.transform(utf8.decoder).join();
 
-      //log(responseBody);
-      var decoded = json.decode(responseBody);
+      final converted = await respbody.transform(utf8.decoder).join();
+      final decoded = json.decode(converted);
 
       T object = new Model.fromJSON(T, decoded);
-      //log(object.runtimeType.toString());
       info = object;
     } catch (e) {
       log(e.toString());
     }
-
-    //log("info returned " + info.runtimeType.toString());
-    repo.add(url, info);
+    repo.add(url.toString(), info);
     _locker.unlock();
     return info;
   }
 
-  Provider(String uri) {
-    this.url = uri;
+  Provider(String struri) {
+    String route = struri.split(domain+"/")[1];
+    url = new Uri.https(domain, route);
+  }
+
+  Provider.uri(Uri uri) {
+    url = uri;
   }
 }
 

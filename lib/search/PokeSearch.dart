@@ -59,7 +59,7 @@ class PokeSearch extends SearchDelegate {
               children: <Widget>[...snapshot.data.map((item) => PokemonSpeciesCard(item.species, 1, _size.width*0.8*0.59, true))],
             );
           } else {
-            return Center(child:PokemonSpeciesCard(snapshot.data.species, _size.width*0.8, _size.width*0.8*0.3, true));
+            return Center(child:PokemonSpeciesCard(snapshot.data.species, _size.width*0.8, _size.width*0.8*0.59, true));
           }
         }
         return Container();
