@@ -40,12 +40,12 @@ class PokemonSpeciesProvider {
 
     final url = Uri.https("pokeapi.co", "api/v2/pokemon-species",
         {"limit": _limit.toString(), "offset": _total.toString()});
-
+    
     var json = await _procesarRespuesta(url);
 
     if (_count == null) _count = json["count"];
 
-    PokemonSpeciesList list = new PokemonSpeciesList.fromJSON(json, "results");
+    PokemonSpeciesList list = new PokemonSpeciesList.fromJSON(json);
 
     _total += list.species.length;
 

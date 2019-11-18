@@ -6,9 +6,12 @@ import 'package:pokedex/models/PokemonEvolutionChain.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/models/PokemonBaseStat.dart';
 import 'package:pokedex/models/PokemonBaseType.dart';
+import 'package:pokedex/models/PokemonSpeciesList.dart';
 import 'package:pokedex/search/PokeSearch.dart';
 
 abstract class Model {
+
+
   factory Model.fromJSON(Type type, Map<String, dynamic> json) {
     //log("factory: " + type.toString());
     switch (type) {
@@ -33,6 +36,9 @@ abstract class Model {
         return new PokemonBaseType.fromJSON(json);
       case PokeIndex:
         return new PokeIndex.fromJSON(json);
+        break;
+      case PokemonSpeciesList:
+        return new PokemonSpeciesList.fromJSON(json);
         break;
     }
 
