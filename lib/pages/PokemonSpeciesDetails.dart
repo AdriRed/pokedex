@@ -10,6 +10,7 @@ import 'package:pokedex/models/PokemonChainLink.dart';
 import 'package:pokedex/models/PokemonEvolutionChain.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/pages/PokedexHomePage.dart';
+import 'package:pokedex/providers/PokemonLoader.dart';
 import 'dart:async';
 
 import 'package:pokedex/providers/Provider.dart';
@@ -41,49 +42,17 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
     species.varieties.forEach((variety) {
       varietiesFutures.add(variety.pokemon.getInfo().then((pokemon) {
         List<Future<dynamic>> futures = [];
-        futures.add(futureAllTypes(pokemon));
-        futures.add(futureAllAbilities(pokemon));
-        futures.add(futureStats(pokemon));
+        futures.add(PokemonLoader.futureAllTypes(pokemon));
+        futures.add(PokemonLoader.futureAllAbilities(pokemon));
+        futures.add(PokemonLoader.futureStats(pokemon));
         return Future.wait(futures);
       }));
     });
     //species.varieties.sort((a, b) => a.isDefault ? 1 : -1);
-    varietiesFutures.add(futureEvolution(species));
+    varietiesFutures.add(PokemonLoader.futureEvolution(species));
     // species.varieties.forEach((v) =>
     //     v.pokemon.info.stats.sort((x, y) => x.stat.info.id - y.stat.info.id));
     return Future.wait<dynamic>(varietiesFutures);
-  }
-
-  static Future<void> futureAllTypes(Pokemon variety) async {
-    // for (var variety in species.varieties) {
-    List<Future<dynamic>> futures = [];
-    for (var type in variety.types) {
-      futures.add(type.type.getInfo());
-    }
-    // }
-    return Future.wait(futures);
-  }
-
-  static Future<void> futureAllAbilities(Pokemon variety) async {
-    List<Future<dynamic>> futures = [];
-    for (var abilitiyProv in variety.abilities) {
-      futures.add(abilitiyProv.ability.getInfo());
-    }
-    return Future.wait(futures);
-  }
-
-  static Future<void> futureEvolution(PokemonSpecies species) async {
-    return species.evolutionChain
-        .getInfo()
-        .then((x) => Future.wait(x.chain.getAllInfo()));
-  }
-
-  static Future<void> futureStats(Pokemon variety) async {
-    List<Future<dynamic>> futures = [];
-    for (var statProv in variety.stats) {
-      futures.add(statProv.stat.getInfo());
-    }
-    return Future.wait(futures);
   }
 
   Widget _evolutions(PokemonChainLink evolution) {
