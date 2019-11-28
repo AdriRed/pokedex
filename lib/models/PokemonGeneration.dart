@@ -23,6 +23,6 @@ class PokemonGeneration implements Model {
     }
 
     pokemonSpecies.sort((a, b) =>
-        (a.url.split("/")[6] as int).compareTo(b.url.split("/")[6] as int));
+        (a.url.toString().split("/")[6] as int).compareTo(b.url.toString().split("/")[6] as int));
   }
 }
