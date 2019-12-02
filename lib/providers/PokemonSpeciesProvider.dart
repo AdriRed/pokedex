@@ -36,11 +36,11 @@ class PokemonSpeciesProvider {
     if (loading) return null;
 
     loading = true;
-    _page++;
-
+    int offset = this._page * this._limit;
     final url = Uri.https("pokeapi.co", "api/v2/pokemon-species",
-        {"limit": _limit.toString(), "offset": _total.toString()});
+        {"limit": this._limit.toString(), "offset": offset.toString()});
     
+    _page++;
     var json = await _procesarRespuesta(url);
 
     if (_count == null) _count = json["count"];
@@ -95,7 +95,7 @@ class PokemonSpeciesProvider {
     if (_count == null) {
       await getMore();
     }
-    var json = await _procesarRespuesta(Uri.tryParse("https://pokeapi.co/api/v2/pokemon-species?limit=807"));
+    var json = await _procesarRespuesta(Uri.tryParse("https://pokeapi.co/api/v2/pokemon-species?limit="+this._count.toString()));
     index = PokeIndex.fromJSON(json);
     return index;
   }

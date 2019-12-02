@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/Model.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
+import 'package:pokedex/pages/PokemonSpeciesDetails.dart';
 import 'package:pokedex/providers/PokemonSpeciesProvider.dart';
 import 'package:pokedex/providers/Provider.dart';
 import 'package:pokedex/widgets/PokemonSpeciesCard.dart';
@@ -56,10 +57,10 @@ class PokeSearch extends SearchDelegate {
         if (snapshot.hasData) {
           if (snapshot.data is List<PokeEntry>) {
             return ListView(
-              children: <Widget>[...snapshot.data.map((item) => PokemonSpeciesCard(item.species, 1, _size.width*0.8*0.59, true))],
+              children: <Widget>[...snapshot.data.map((item) => PokemonSpeciesCard(item.species))],
             );
           } else {
-            return Center(child:PokemonSpeciesCard(snapshot.data.species, _size.width*0.8, _size.width*0.8*0.59, true));
+            return Center(child:PokemonSpeciesCard(snapshot.data.species));
           }
         }
         return Container();

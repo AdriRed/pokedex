@@ -72,7 +72,7 @@ class _PokemonSpeciesDetailState extends State<PokemonSpeciesDetail> {
         //     )),
         //Divider(color: Colors.black),
         ...List.generate(allevos.length,
-            (index) => PokemonSpeciesCard(allevos[index], 1, _size.width*0.5))
+            (index) => PokemonSpeciesCard(allevos[index]))
       ],
     ));
   }
