@@ -9,6 +9,7 @@ import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/pages/PokemonSpeciesDetails.dart';
 import 'package:pokedex/providers/PokemonLoader.dart';
 import 'package:pokedex/providers/Provider.dart';
+import 'package:pokedex/widgets/StyledPokemonSpeciesCard.dart';
 
 class PokemonSpeciesCard extends StatefulWidget {
   final Provider<PokemonSpecies> speciesProv;
@@ -66,30 +67,37 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
   }
 
   Widget get _data {
-    return Card(
-        margin: EdgeInsets.all(5),
-        color: Colors.white,
-        child: GestureDetector(
-            onTap: () {
+    return PokemonCard(this.species.info, 
+      index : this.species.info.id, 
+      key : new Key("pksp" + this.species.info.id.toString()),
+      onPress: () {
               Navigator.pushNamed(context, PokemonSpeciesDetail.route,
                   arguments: species.info);
-            },
-            child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Column(children: <Widget>[
-                        _image,
-                        Divider(
-                          color: Colors.black,
-                          indent: 3,
-                          endIndent: 3,
-                        ),
-                        _name
-                      ]),
-                      //_types
-                    ]))));
+            });
+    // return Card(
+    //     margin: EdgeInsets.all(5),
+    //     color: Colors.white,
+    //     child: GestureDetector(
+    //         onTap: () {
+    //           Navigator.pushNamed(context, PokemonSpeciesDetail.route,
+    //               arguments: species.info);
+    //         },
+    //         child: Padding(
+    //             padding: EdgeInsets.symmetric(horizontal: 2, vertical: 1),
+    //             child: Column(
+    //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                 children: <Widget>[
+    //                   Column(children: <Widget>[
+    //                     _image,
+    //                     Divider(
+    //                       color: Colors.black,
+    //                       indent: 3,
+    //                       endIndent: 3,
+    //                     ),
+    //                     _name
+    //                   ]),
+    //                   //_types
+    //                 ]))));
   }
 
   Widget get _types {
@@ -99,7 +107,7 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               !snapshot.hasError) {
-            log(species.info.defaultVariety.pokemon.info.types[0].type.info
+            log("error" + species.info.defaultVariety.pokemon.info.types[0].type.info
                 .id.toString());
             return FadeTransition(
                 // If the widget is visible, animate to 0.0 (invisible).
@@ -179,7 +187,7 @@ class _PokemonSpeciesCardState extends State<PokemonSpeciesCard>
 
   Widget get _futureBuilder {
     return FutureBuilder(
-        future: species.getInfo(),
+        future: species.getInfo().then((result) => result.defaultVariety.pokemon.getInfo()).then((value) => PokemonLoader.futureAllTypes(value)),
         builder: (context, snapshot) {
           if (snapshot.hasError) return Center(child: Icon(Icons.close));
           if (snapshot.connectionState == ConnectionState.waiting &&

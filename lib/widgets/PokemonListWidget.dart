@@ -34,7 +34,7 @@ class PokemonListWidget extends StatelessWidget {
       child: GridView.count(
 
         controller: _pageController,
-        crossAxisCount: 4,
+        crossAxisCount: 2,
         childAspectRatio: (_screenSize.width/ (_screenSize.width*1.9)),
         //shrinkWrap: true,
         // children: _tarjetas(context),
