@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/models/PokemonBaseType.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
+import 'package:pokedex/pages/PokemonSpeciesDetails.dart';
 import 'package:pokedex/providers/PokemonLoader.dart';
 import 'package:pokedex/providers/Provider.dart';
 
@@ -166,7 +167,7 @@ class PokemonSpeciesCard extends StatelessWidget  {
 
 
   Widget _loadedData(BuildContext context, Color c) {
-    return LayoutBuilder(
+    var data = LayoutBuilder(
       builder: (ctx, constrains) {
         final itemHeight = constrains.maxHeight;
 
@@ -202,6 +203,13 @@ class PokemonSpeciesCard extends StatelessWidget  {
           ),
         );
       },
+    );
+    return GestureDetector(
+      onTap: () {
+              Navigator.pushNamed(context, PokemonSpeciesDetail.route,
+                  arguments: species.info);
+            },
+      child: data,
     );
   }
 
