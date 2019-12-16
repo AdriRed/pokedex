@@ -15,7 +15,6 @@ class PokedexHomePage extends StatelessWidget {
 
   Widget _footer(BuildContext context) {
     return Container(
-      width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -66,10 +65,8 @@ class PokedexHomePage extends StatelessWidget {
           ],
         ),
         body: Container(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[_footer(context)],
-        )),
+            child: _footer(context)),
+        
         drawer: new Drawer(
           child: Padding(
             padding: MediaQuery.of(context).viewPadding,

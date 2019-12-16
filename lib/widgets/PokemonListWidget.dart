@@ -28,19 +28,15 @@ class PokemonListWidget extends StatelessWidget {
       }
     });
     log(_screenSize.width.toString() + " " + _screenSize.height.toString());
-    return Container(
-      height: _screenSize.height * 0.88,
-      color: Colors.blueGrey,
-      child: GridView.count(
-
-        controller: _pageController,
-        crossAxisCount: 4,
-        childAspectRatio: (_screenSize.width/ (_screenSize.width*1.9)),
-        //shrinkWrap: true,
-        // children: _tarjetas(context),
-        children: List.generate(species.length, (index) => new PokemonSpeciesCard(species[index], _screenSize.width, _screenSize.width*1.7))
-      ),
-    );
+    return Expanded(child: GridView.count(
+      controller: _pageController,
+      crossAxisCount: 2,
+      childAspectRatio: (_screenSize.width/ (_screenSize.width*0.75)),
+      padding: EdgeInsets.all(10),
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      // shrinkWrap: true,
+      children: List.generate(species.length, (index) => new PokemonSpeciesCard(species[index]))));
   }
 }
 
