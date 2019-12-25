@@ -43,7 +43,7 @@ class Provider<T extends Model> {
       final resp = await http.getUrl(url);
       final respbody = await resp.close();
       
-      log(respbody.statusCode.toString());
+      log(respbody.statusCode.toString() + " -- " + url.toString());
 
       if (respbody.statusCode != 200) {
         _locker.unlock();

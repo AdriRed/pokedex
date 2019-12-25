@@ -13,39 +13,8 @@ class PokedexHomePage extends StatelessWidget {
   final PokemonSpeciesProvider _provider = new PokemonSpeciesProvider();
   bool first = true;
 
-  Widget _footer(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          StreamBuilder(
-            stream: _provider.speciesStream,
-            builder: (BuildContext context,
-                AsyncSnapshot<List<Provider<PokemonSpecies>>> snapshot) {
-              if (snapshot.hasData) {
-                return PokemonListWidget(
-                  snapshot.data,
-                  _provider.getMore,
-                );
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (first) {
-      // Provider<PokeIndex> provider =
-      //     new Provider("https://pokeapi.co/api/v2/pokemon-species/?limit=807");
-      // provider.getInfo();
-      _provider.getMore();
-      first = false;
-    }
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -58,32 +27,57 @@ class PokedexHomePage extends StatelessWidget {
                 showSearch(
                   context: context,
                   delegate: PokeSearch(_provider, MediaQuery.of(context).size),
-                  // query: 'Hola'
                 );
               },
             )
           ],
         ),
         body: Container(
-            child: _footer(context)),
-        
+          child: _footer(context),
+        ),
         drawer: new Drawer(
-          child: Padding(
-            padding: MediaQuery.of(context).viewPadding,
-            child:Column(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                _generations,
-                _buttonOf(context, "Settings", Icons.settings, () => log("SETTINGS!")) // Align bot
-              ],
-        ))));
+            child: Padding(
+                padding: MediaQuery.of(context).viewPadding,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    _generations,
+                    _buttonOf(context, "Settings", Icons.settings,
+                        () => log("SETTINGS!")) // Align bot
+                  ],
+                ))));
+  }
+
+  Widget _footer(BuildContext context) {
+    return Container(
+        child: FutureBuilder(
+            future: _provider.initIndex().then((_){_provider.getMore();}),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return StreamBuilder(
+                    stream: _provider.speciesStream,
+                    builder: (BuildContext ctx,
+                        AsyncSnapshot<List<Provider<PokemonSpecies>>>
+                            snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return PokemonListWidget(
+                          snapshot.data,
+                          _provider.getMore,
+                        );
+                      }
+                      return Center(child: CircularProgressIndicator());
+
+                    });
+              }
+              return Center(child: CircularProgressIndicator());
+            }));
   }
 
   Widget _buttonOf(
       BuildContext ctx, String label, IconData img, Function() onPressed) {
     return Container(
       height: MediaQuery.of(ctx).size.width * 0.1,
-      padding: EdgeInsets.fromLTRB(10,10, 0, 0),
+      padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
       child: GestureDetector(
         onTap: onPressed,
         child: Stack(

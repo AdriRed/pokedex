@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/models/Model.dart';
 import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/pages/PokemonSpeciesDetails.dart';
+import 'package:pokedex/providers/PokeIndex.dart';
 import 'package:pokedex/providers/PokemonSpeciesProvider.dart';
 import 'package:pokedex/providers/Provider.dart';
 import 'package:pokedex/widgets/PokemonSpeciesCard.dart';
@@ -66,27 +67,5 @@ class PokeSearch extends SearchDelegate {
         return Container();
       },
     );
-  }
-}
-
-class PokeEntry {
-  Provider<PokemonSpecies> species;
-  String name;
-  int id;
-
-  PokeEntry.fromJSON(Map<String, dynamic> json, int id) {
-    name = json["name"];
-    species = new Provider(json["url"]);
-    this.id = id;
-  }
-}
-
-class PokeIndex implements Model {
-  List<PokeEntry> entries = new List();
-
-  PokeIndex.fromJSON(Map<String, dynamic> json) {
-    for (var i = 0; i < json["results"].length; i++) {
-      entries.add(new PokeEntry.fromJSON(json["results"][i], i + 1));
-    }
   }
 }

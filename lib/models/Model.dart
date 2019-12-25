@@ -8,6 +8,7 @@ import 'package:pokedex/models/PokemonSpecies.dart';
 import 'package:pokedex/models/PokemonBaseStat.dart';
 import 'package:pokedex/models/PokemonBaseType.dart';
 import 'package:pokedex/models/PokemonSpeciesList.dart';
+import 'package:pokedex/providers/PokeIndex.dart';
 import 'package:pokedex/search/PokeSearch.dart';
 
 abstract class Model {

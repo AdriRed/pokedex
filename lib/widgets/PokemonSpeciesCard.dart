@@ -217,7 +217,7 @@ class PokemonSpeciesCard extends StatelessWidget  {
     return FutureBuilder(
       future: pokemon.defaultVariety.pokemon.getInfo(),
       builder: (ctx1, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
+        if (!snapshot.hasData && snapshot.connectionState != ConnectionState.done) {
           return Center(child: CircularProgressIndicator(),);
         }
         return FutureBuilder(
