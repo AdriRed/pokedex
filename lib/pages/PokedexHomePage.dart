@@ -53,23 +53,26 @@ class PokedexHomePage extends StatelessWidget {
         child: FutureBuilder(
             future: _provider.initIndex().then((_){_provider.getMore();}),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return StreamBuilder(
+              if (snapshot.connectionState == ConnectionState.done || snapshot.hasData) {
+                return StreamBuilder<List<Provider<PokemonSpecies>>>(
                     stream: _provider.speciesStream,
-                    builder: (BuildContext ctx,
-                        AsyncSnapshot<List<Provider<PokemonSpecies>>>
-                            snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return PokemonListWidget(
+                    initialData: _provider.species,
+                    builder: (ctx, snapshot) {
+                      log("Footer " + snapshot.data.runtimeType.toString());
+                      if (!snapshot.hasData || snapshot.data.length <= 0)
+                        return Center(child: Column(children: <Widget>[CircularProgressIndicator(), Text("Reciving index :(...")],));
+                      if (snapshot.hasError)
+                        return Center(child: Icon(Icons.mood_bad),);
+                      return PokemonListWidget(
                           snapshot.data,
                           _provider.getMore,
                         );
-                      }
-                      return Center(child: CircularProgressIndicator());
 
                     });
+              } else if (snapshot.hasError) {
+                return Center(child: Icon(Icons.mood_bad),);
               }
-              return Center(child: CircularProgressIndicator());
+              return Center(child: Column(children: <Widget>[CircularProgressIndicator(), Text("Loading provider...")],));
             }));
   }
 

@@ -28,7 +28,7 @@ class PokemonListWidget extends StatelessWidget {
       }
     });
     log(_screenSize.width.toString() + " " + _screenSize.height.toString());
-    return Expanded(child: GridView.count(
+    return Column(children: [Expanded(child: GridView.count(
       controller: _pageController,
       crossAxisCount: 2,
       childAspectRatio: (_screenSize.width/ (_screenSize.width*0.75)),
@@ -36,7 +36,8 @@ class PokemonListWidget extends StatelessWidget {
       mainAxisSpacing: 10,
       crossAxisSpacing: 10,
       // shrinkWrap: true,
-      children: List.generate(species.length, (index) => new PokemonSpeciesCard(species[index]))));
+      children: List.generate(species.length, (index) => new PokemonSpeciesCard(species[index]))))]
+    );;
   }
 }
 

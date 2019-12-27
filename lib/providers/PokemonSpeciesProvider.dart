@@ -19,21 +19,26 @@ class PokemonSpeciesProvider {
   final int _limit = 16;
   bool loading = false;
   PokeIndex index;
-
+  final List<Provider<PokemonSpecies>> species = new List();
+  
   final _streamController =
       StreamController<List<Provider<PokemonSpecies>>>.broadcast();
 
-  Function(List<Provider<PokemonSpecies>>) get speciesSink =>
-      _streamController.sink.add;
-  Stream<List<Provider<PokemonSpecies>>> get speciesStream =>
-      _streamController.stream;
+  Function(List<Provider<PokemonSpecies>>) get speciesSink {
+    log("Sinking things");
+    return _streamController.sink.add;
+  }
+  Stream<List<Provider<PokemonSpecies>>> get speciesStream {
+    log("Streaming things");
+    return _streamController.stream;
+  }
 
   void disposeStream() {
     _streamController?.close();
   }
 
   Future<List<Provider<PokemonSpecies>>> getMore() async {
-    if (loading) return getMore();
+    if (loading) return await getMore();
     if (index == null) await initIndex();
     loading = true;
     // int offset = this._page * this._limit;
@@ -52,8 +57,8 @@ class PokemonSpeciesProvider {
     // final resp = list.species;
     // _species.addAll(resp);
     var list = index.fetch(_limit);
-    speciesSink(list);
-
+    species.addAll(list);
+    speciesSink(species);
     loading = false;
     return list;
     // return resp;
