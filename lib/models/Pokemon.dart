@@ -13,6 +13,7 @@ class Pokemon implements Model {
   //Provider<PokemonSpecies> specie;
   List<PokemonStat> stats;
   Map<String, String> sprites;
+  String hdSprite;
   List<PokemonType> types;
   List<PokemonAbility> abilities;
 
@@ -23,7 +24,7 @@ class Pokemon implements Model {
     sprites = new Map();
     types = new List();
     abilities = new List();
-
+    hdSprite = "https://assets.pokemon.com/assets/cms2/img/pokedex/full/"+ (id / 100).toStringAsFixed(2).replaceAll(".", "") +".png";
   
     for (var stat in json["stats"]) {
       stats.add(new PokemonStat.fromJSON(stat));
