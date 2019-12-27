@@ -33,7 +33,7 @@ class PokedexHomePage extends StatelessWidget {
           ],
         ),
         body: Container(
-          child: _footer(context),
+          child: _newFooter(context),
         ),
         drawer: new Drawer(
             child: Padding(
@@ -69,6 +69,20 @@ class PokedexHomePage extends StatelessWidget {
                         );
 
                     });
+              } else if (snapshot.hasError) {
+                return Center(child: Icon(Icons.mood_bad),);
+              }
+              return Center(child: Column(children: <Widget>[CircularProgressIndicator(), Text("Loading provider...")],));
+            }));
+  }
+
+  Widget _newFooter(BuildContext context) {
+    return Container(
+        child: FutureBuilder(
+            future: _provider.initIndex(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return PokemonListWidget.all(_provider.index);
               } else if (snapshot.hasError) {
                 return Center(child: Icon(Icons.mood_bad),);
               }
